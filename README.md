@@ -1,9 +1,10 @@
 
 # Project Title
 
-This dataset contains information about cancer cases, deaths, and related demographic data for various regions
+This dataset contains information about cancer cases, deaths, and related demographic data for various regions.
 
 avganncount: Average number of cancer cases diagnosed annually.
+
 avgdeathsperyear: Average number of deaths due to cancer per year.
 target_deathrate: Target death rate due to cancer.
 incidencerate: Incidence rate of cancer.
@@ -42,7 +43,7 @@ statefips  countyfips  avghouseholdsize                           geography
  1   countyfips        3220 non-null   int64  
  2   avghouseholdsize  3220 non-null   float64
 3   geography         3220 non-null   object
-dtypes: float64(1), int64(2), object(1)   
+dtypes: float64(1), int64(2), object(1)
 
 *Missing values and duplicate checking*
 statefips           0
