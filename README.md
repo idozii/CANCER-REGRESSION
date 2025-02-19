@@ -259,15 +259,15 @@ Plot for further validation.
 
 This part describes the visualization of the data.
 
-### Graph1: Histogram of target_deathrate
+### Graph 1: Histogram of target_deathrate
 
 ![Histogram of target_deathrate](/figure/Figure_1.png)
 
-### Graph2: Boxplot of target_deathrate with bennedInc
+### Graph 2: Boxplot of target_deathrate with bennedInc
 
 ![Boxplot of target_deathrate with bennedInc](/figure/Figure_2.png)
 
-### Graph3: Pairplot of target_deathrate with other important features
+### Graph 3: Pairplot of target_deathrate with other important features
 
 ![Pairplot of target_deathrate with other important features](/figure/Figure_3.png)
 
@@ -276,3 +276,13 @@ This part describes the visualization of the data.
 Based on the plots, we can see that the target death rate is normally distributed and has a strong correlation with other features.
 
 ## PREDICTING
+
+This part will predict the target death rate based on the features.
+
+### Linear Regression
+
+### Random Forest Regression
+
+### Evaluation (PREDICTING_PART)
+
+The Random Forest Regression model has a better performance than the Linear Regression model.

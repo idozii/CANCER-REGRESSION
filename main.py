@@ -5,6 +5,7 @@ import seaborn as sns
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.ensemble import RandomForestRegressor
+from sklearn.linear_model import LinearRegression
 sns.set_style('whitegrid')
 sns.set_palette('colorblind')
 
@@ -32,7 +33,7 @@ sns.histplot(merged_data['target_deathrate'], bins=50, kde=True)
 plt.show()
 
 # sns.boxplot
-sns.boxplot(data=merged_data, x='binnedinc', y='target_deathrate', palette='Set2')
+sns.boxplot(data=merged_data, x='binnedinc', y='target_deathrate', hue='binnedinc', palette='Set2', legend=False)
 plt.show()
 
 # sns.pairplot
@@ -40,9 +41,19 @@ sns.pairplot(merged_data[['avgdeathsperyear', 'binnedinc', 'incidencerate', 'med
 plt.show()
 
 #! Build model for predicting
-X = merged_data[['avganncount']]
-Y = merged_data['avgdeathsperyear']
+X = merged_data.drop(columns=['target_deathrate','binnedinc', 'geography'])
+Y = merged_data['target_deathrate']
 
-model = RandomForestRegressor(random_state=42, n_estimators=50)
-model.fit(X, Y)
-y_pred = model.predict(X)
+X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, random_state=42)
+
+lr_model = LinearRegression()
+lr_model.fit(X_train, Y_train)
+y_pred1 = lr_model.predict(X_test)
+r2_score(Y_test, y_pred1)
+print('R2 Score of Linear Regression: ', r2_score(Y_test, y_pred1))
+
+rf_model = RandomForestRegressor(random_state=42, n_estimators=50)
+rf_model.fit(X_train, Y_train)
+y_pred2 = rf_model.predict(X_test)
+r2_score(Y_test, y_pred2)
+print('R2 Score of Random Forest Regressor: ', r2_score(Y_test, y_pred2))
