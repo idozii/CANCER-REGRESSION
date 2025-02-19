@@ -251,21 +251,28 @@ Approve merge for plotting and predicting.
 
 ### Evaluation (MERGING_PART)
 
-*Noted that target death rate is the most important feature to predict
-*Plot for further validation
+Noted that target death rate is the most important feature to predict.
+
+Plot for further validation.
 
 ## PLOTTING
 
-!!Plot for target death rate (3 plots based on teacher's requirement)
-*Graph1: histogram of target_deathrate*
+Plot for target death rate (3 plots based on teacher's requirement)
+
+### Graph1: histogram of target_deathrate
+
 Figure_1.png
-*Graph2: boxplot of target_deathrate*
+
+### Graph2: boxplot of target_deathrate
+
 Figure_2.png
-*Graph3: pairplot of target_deathrate with other important features*
+
+### Graph3: pairplot of target_deathrate with other important features
+
 Figure_3.png
 
 ### Evaluation (PLOTTING_PART)
 
-Based on the plots, we can see that the target death rate is normally distributed and has a strong correlation with other features
+Based on the plots, we can see that the target death rate is normally distributed and has a strong correlation with other features.
 
 ## PREDICTING
