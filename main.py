@@ -46,18 +46,13 @@ merged_data = merged_data.dropna()
 numeric_columns = merged_data.select_dtypes(include=['number']).columns
 correlation_matrix = merged_data[numeric_columns].corr()
 
-# Plot correlation matrix
-plt.figure(figsize=(12, 8))
-sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm')
-plt.show()
-
 # Select features with high correlation to target_deathrate
-correlation_threshold = 0.3
+correlation_threshold = 0.1
 correlated_features = correlation_matrix['target_deathrate'][abs(correlation_matrix['target_deathrate']) > correlation_threshold].index.tolist()
 correlated_features.remove('target_deathrate')
 
 #! Build model for predicting
-X = merged_data.drop(columns=["avganncount", 'geography',"binnedinc", "target_deathrate"]) 
+X = merged_data[correlated_features] 
 Y = merged_data['target_deathrate']
 X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, random_state=42)
 
