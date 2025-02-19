@@ -62,62 +62,70 @@ birthrate: Birth rate in the region.
 | avghouseholdsize  | 3220 non-null  | float64 |
 | geography         | 3220 non-null  | object  |
 
-## Data types
+### Data types
 
 dtypes: float64(1), int64(2), object(1)
 
-*Missing values and duplicate checking*
-statefips           0
-countyfips          0
-avghouseholdsize    0
-geography           0
-dtype: int64
+## Missing values and duplicate checking
 
-*cancereg_data*
-avganncount  avgdeathsperyear  target_deathrate  incidencerate  medincome  popest2015  ...   pctwhite  pctblack  pctasian  pctotherrace  pctmarriedhouseholds  birthrate
-0       1397.0               469             164.9          489.8      61898      260131  ...  81.780529  2.594728  4.821857      1.843479             52.856076   6.118831
-1        173.0                70             161.3          411.6      48127       43269  ...  89.228509  0.969102  2.246233      3.741352             45.372500   4.333096
-2        102.0                50             174.7          349.7      49348       21026  ...  90.922190  0.739673  0.465898      2.747358             54.444868   3.729488
-3        427.0               202             194.8          430.4      44243       75882  ...  91.744686  0.782626  1.161359      1.362643             51.021514   4.603841
-4         57.0                26             144.4          350.1      49955       10321  ...  94.104024  0.270192  0.665830      0.492135             54.027460   6.796657
+| Column            | Missing Values |
+|-------------------|----------------|
+| statefips         | 0              |
+| countyfips        | 0              |
+| avghouseholdsize  | 0              |
+| geography         | 0              |
+| dtype             | int64          |
 
-### Non-null checking
+# (*cancereg_data*)
 
-#   Column                   Non-Null Count  Dtype  
----  ------                   --------------  -----  
- 0   avganncount              3047 non-null   float64
- 1   avgdeathsperyear         3047 non-null   int64
- 2   target_deathrate         3047 non-null   float64
- 3   incidencerate            3047 non-null   float64
- 4   medincome                3047 non-null   int64
- 5   popest2015               3047 non-null   int64
- 6   povertypercent           3047 non-null   float64
- 7   studypercap              3047 non-null   float64
- 8   binnedinc                3047 non-null   object
- 9   medianage                3047 non-null   float64
- 10  medianagemale            3047 non-null   float64
- 11  medianagefemale          3047 non-null   float64
- 12  geography                3047 non-null   object
- 13  percentmarried           3047 non-null   float64
- 14  pctnohs18_24             3047 non-null   float64
- 15  pcths18_24               3047 non-null   float64
- 16  pctsomecol18_24          762 non-null    float64
- 17  pctbachdeg18_24          3047 non-null   float64
- 18  pcths25_over             3047 non-null   float64
- 19  pctbachdeg25_over        3047 non-null   float64
- 20  pctemployed16_over       2895 non-null   float64
- 21  pctunemployed16_over     3047 non-null   float64
- 22  pctprivatecoverage       3047 non-null   float64
- 23  pctprivatecoveragealone  2438 non-null   float64
- 24  pctempprivcoverage       3047 non-null   float64
- 25  pctpubliccoverage        3047 non-null   float64
- 26  pctpubliccoveragealone   3047 non-null   float64
- 27  pctwhite                 3047 non-null   float64
- 28  pctblack                 3047 non-null   float64
- 29  pctasian                 3047 non-null   float64
- 30  pctotherrace             3047 non-null   float64
- 31  pctmarriedhouseholds     3047 non-null   float64
- 32  birthrate                3047 non-null   float64
+| avganncount | avgdeathsperyear | target_deathrate | incidencerate | medincome | popest2015 | pctwhite  | pctblack | pctasian | pctotherrace | pctmarriedhouseholds | birthrate |
+|-------------|------------------|------------------|---------------|-----------|------------|-----------|----------|----------|--------------|----------------------|-----------|
+| 1397.0      | 469              | 164.9            | 489.8         | 61898     | 260131     | 81.780529 | 2.594728 | 4.821857 | 1.843479     | 52.856076             | 6.118831  |
+| 173.0       | 70               | 161.3            | 411.6         | 48127     | 43269      | 89.228509 | 0.969102 | 2.246233 | 3.741352     | 45.372500             | 4.333096  |
+| 102.0       | 50               | 174.7            | 349.7         | 49348     | 21026      | 90.922190 | 0.739673 | 0.465898 | 2.747358     | 54.444868             | 3.729488  |
+| 427.0       | 202              | 194.8            | 430.4         | 44243     | 75882      | 91.744686 | 0.782626 | 1.161359 | 1.362643     | 51.021514             | 4.603841  |
+| 57.0        | 26               | 144.4            | 350.1         | 49955     | 10321      | 94.104024 | 0.270192 | 0.665830 | 0.492135     | 54.027460             | 6.796657  |
+
+## Non-null checking
+
+| Column                   | Non-Null Count | Dtype   |
+|--------------------------|----------------|---------|
+| avganncount              | 3047 non-null  | float64 |
+| avgdeathsperyear         | 3047 non-null  | int64   |
+| target_deathrate         | 3047 non-null  | float64 |
+| incidencerate            | 3047 non-null  | float64 |
+| medincome                | 3047 non-null  | int64   |
+| popest2015               | 3047 non-null  | int64   |
+| povertypercent           | 3047 non-null  | float64 |
+| studypercap              | 3047 non-null  | float64 |
+| binnedinc                | 3047 non-null  | object  |
+| medianage                | 3047 non-null  | float64 |
+| medianagemale            | 3047 non-null  | float64 |
+| medianagefemale          | 3047 non-null  | float64 |
+| geography                | 3047 non-null  | object  |
+| percentmarried           | 3047 non-null  | float64 |
+| pctnohs18_24             | 3047 non-null  | float64 |
+| pcths18_24               | 3047 non-null  | float64 |
+| pctsomecol18_24          | 762 non-null   | float64 |
+| pctbachdeg18_24          | 3047 non-null  | float64 |
+| pcths25_over             | 3047 non-null  | float64 |
+| pctbachdeg25_over        | 3047 non-null  | float64 |
+| pctemployed16_over       | 2895 non-null  | float64 |
+| pctunemployed16_over     | 3047 non-null  | float64 |
+| pctprivatecoverage       | 3047 non-null  | float64 |
+| pctprivatecoveragealone  | 2438 non-null  | float64 |
+| pctempprivcoverage       | 3047 non-null  | float64 |
+| pctpubliccoverage        | 3047 non-null  | float64 |
+| pctpubliccoveragealone   | 3047 non-null  | float64 |
+| pctwhite                 | 3047 non-null  | float64 |
+| pctblack                 | 3047 non-null  | float64 |
+| pctasian                 | 3047 non-null  | float64 |
+| pctotherrace             | 3047 non-null  | float64 |
+| pctmarriedhouseholds     | 3047 non-null  | float64 |
+| birthrate                | 3047 non-null  | float64 |
+
+### Data types
+
 dtypes: float64(28), int64(3), object(2)
 
 *Missing values and duplicate checking*
