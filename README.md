@@ -147,7 +147,7 @@ dtypes: float64(28), int64(3), object(2)
 | pctmarriedhouseholds     | 0              |
 | birthrate                | 0              |
 
-### Feedback
+### Evaluation (CLEANING_PART)
 
 2 datasets have 1 common column: geography.
 
@@ -155,7 +155,7 @@ dtypes: float64(28), int64(3), object(2)
 
 Approve merge for plotting and predicting.
 
-## MERGING DATA
+## MERGING DATA BASED ON GEOGRAPHY
 
 ### *merged_data*
 
@@ -249,8 +249,12 @@ Approve merge for plotting and predicting.
 | pctmarriedhouseholds     | 0              |
 | birthrate                | 0              |
 
-??=> Noted that target death rate is the most important feature to predict
-??=> Plot for further validation
+### Evaluation (MERGING_PART)
+
+*Noted that target death rate is the most important feature to predict
+*Plot for further validation
+
+## PLOTTING
 
 !!Plot for target death rate (3 plots based on teacher's requirement)
 *Graph1: histogram of target_deathrate*
@@ -260,6 +264,8 @@ Figure_2.png
 *Graph3: pairplot of target_deathrate with other important features*
 Figure_3.png
 
-??=> Based on the plots, we can see that the target death rate is normally distributed and has a strong correlation with other features
+### Evaluation (PLOTTING_PART)
 
-!!Predicting target death rate using random forest regressor
+Based on the plots, we can see that the target death rate is normally distributed and has a strong correlation with other features
+
+## PREDICTING
