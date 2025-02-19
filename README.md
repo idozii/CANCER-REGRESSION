@@ -151,7 +151,7 @@ This part illustrates filtered datasets after processing through dropna(), dropd
 
 2 datasets don't need to clean anymore because they don't have any missing values and duplicates.
 
-Approve merge for plotting and predicting.
+Approved to merge for plotting and predicting.
 
 ## MERGING DATA BASED ON GEOGRAPHY
 
