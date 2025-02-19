@@ -6,6 +6,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.linear_model import LinearRegression
+from sklearn.tree import DecisionTreeRegressor
 sns.set_style('whitegrid')
 sns.set_palette('colorblind')
 
@@ -29,31 +30,60 @@ merged_data = merged_data.dropna()
 #! Plot the data
 ##Target deathrate
 # sns.histogram
-sns.histplot(merged_data['target_deathrate'], bins=50, kde=True)
+# sns.histplot(merged_data['target_deathrate'], bins=50, kde=True)
+# plt.show()
+
+# # sns.boxplot
+# sns.boxplot(data=merged_data, x='binnedinc', y='target_deathrate', hue='binnedinc', palette='Set2', legend=False)
+# plt.show()
+
+# # sns.pairplot
+# sns.pairplot(merged_data[['avgdeathsperyear', 'binnedinc', 'incidencerate', 'medincome' , 'medianage', 'geography', 'target_deathrate']])
+# plt.show()
+
+#!Calculate correlation matrix
+# Select only numeric columns for correlation matrix
+numeric_columns = merged_data.select_dtypes(include=['number']).columns
+correlation_matrix = merged_data[numeric_columns].corr()
+
+# Plot correlation matrix
+plt.figure(figsize=(12, 8))
+sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm')
 plt.show()
 
-# sns.boxplot
-sns.boxplot(data=merged_data, x='binnedinc', y='target_deathrate', hue='binnedinc', palette='Set2', legend=False)
-plt.show()
-
-# sns.pairplot
-sns.pairplot(merged_data[['avgdeathsperyear', 'binnedinc', 'incidencerate', 'medincome' , 'medianage', 'geography', 'target_deathrate']])
-plt.show()
+# Select features with high correlation to target_deathrate
+correlation_threshold = 0.3
+correlated_features = correlation_matrix['target_deathrate'][abs(correlation_matrix['target_deathrate']) > correlation_threshold].index.tolist()
+correlated_features.remove('target_deathrate')
 
 #! Build model for predicting
-X = merged_data.drop(columns=['target_deathrate','binnedinc', 'geography'])
+X = merged_data.drop(columns=["avganncount", 'geography',"binnedinc", "target_deathrate"]) 
 Y = merged_data['target_deathrate']
-
 X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, random_state=42)
 
+# Linear Regression model
 lr_model = LinearRegression()
 lr_model.fit(X_train, Y_train)
-y_pred1 = lr_model.predict(X_test)
-r2_score(Y_test, y_pred1)
-print('R2 Score of Linear Regression: ', r2_score(Y_test, y_pred1))
+y_pred1 = lr_model.predict(X_train)
+test_data = X_test.iloc[[1]]
+prediction = lr_model.predict(test_data)
+print(f"The predicted value is {prediction}. The actual value is {Y_test.iloc[1]}")
+print('Root Mean Squared Error of Linear Regression: ', np.sqrt(mean_squared_error(y_pred1, Y_train)))
 
-rf_model = RandomForestRegressor(random_state=42, n_estimators=50)
+# Random Forest Regressor model
+rf_model = RandomForestRegressor()
 rf_model.fit(X_train, Y_train)
-y_pred2 = rf_model.predict(X_test)
-r2_score(Y_test, y_pred2)
-print('R2 Score of Random Forest Regressor: ', r2_score(Y_test, y_pred2))
+y_pred2 = rf_model.predict(X_train)
+test_data = X_test.iloc[[1]]
+prediction = rf_model.predict(test_data)
+print(f"The predicted value is {prediction}. The actual value is {Y_test.iloc[1]}")
+print('Root Mean Squared Error of Random Forest Regressor: ', np.sqrt(mean_squared_error(y_pred2, Y_train)))
+
+# Decision Tree Regressor model
+dt_model = DecisionTreeRegressor()
+dt_model.fit(X_train, Y_train)
+y_pred3 = dt_model.predict(X_train)
+test_data = X_test.iloc[[1]]
+prediction = dt_model.predict(test_data)
+print(f"The predicted value is {prediction}. The actual value is {Y_test.iloc[1]}")
+print('Root Mean Squared Error of Decision Tree Regressor: ', np.sqrt(mean_squared_error(y_pred3, Y_train)))
