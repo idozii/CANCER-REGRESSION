@@ -28,6 +28,8 @@ This dataset contains information about cancer cases, deaths, and related demogr
 
 ## FIRST CHECK AFTER CLEANING
 
+This part illustrates filtered datasets after processing through dropna(), dropduplicates() and ffill().
+
 ### *avghouseholdsize_data*
 
 | statefips | countyfips | avghouseholdsize | geography                             |
@@ -147,11 +149,13 @@ This dataset contains information about cancer cases, deaths, and related demogr
 
 2 datasets have 1 common column: geography.
 
-2 datasets don't need to clean anymore.
+2 datasets don't need to clean anymore because they don't have any missing values and duplicates.
 
 Approve merge for plotting and predicting.
 
 ## MERGING DATA BASED ON GEOGRAPHY
+
+This part provides information about merging data and how I clean these datasets within duplicates, missing values cases.
 
 ### *merged_data*
 
@@ -253,7 +257,7 @@ Plot for further validation.
 
 ## PLOTTING
 
-Plot for target death rate (3 plots based on teacher's requirement)
+This part describes the visualization of the data.
 
 ### Graph1: Histogram of target_deathrate
 
