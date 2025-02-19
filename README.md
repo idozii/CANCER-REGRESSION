@@ -289,4 +289,4 @@ This part will predict the target death rate based on the features.
 
 ### Evaluation (PREDICTING_PART)
 
-The Random Forest Regression model has a better performance than the Linear Regression model.
+The Random Forest Regression model outperforms the other models with the prediction of the target death rate.
