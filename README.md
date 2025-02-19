@@ -3,49 +3,32 @@
 
 This dataset contains information about cancer cases, deaths, and related demographic data for various regions.
 
-avganncount: Average number of cancer cases diagnosed annually.
+| Column                   | Description                                                   |
+|--------------------------|---------------------------------------------------------------|
+| avganncount              | Average number of cancer cases diagnosed annually             |
+| avgdeathsperyear         | Average number of deaths due to cancer per year               |
+| target_deathrate         | Target death rate due to cancer                               |
+| incidencerate            | Incidence rate of cancer                                      |
+| medincome                | Median income in the region                                   |
+| popest2015               | Estimated population in 2015                                  |
+| povertypercent           | Percentage of population below the poverty line               |
+| studypercap              | Per capita number of cancer-related clinical trials conducted |
+| binnedinc                | Binned median income                                          |
+| medianage                | Median age in the region                                      |
+| pctprivatecoveragealone  | Percentage of population covered by private health insurance alone |
+| pctempprivcoverage       | Percentage of population covered by employee-provided private health insurance |
+| pctpubliccoverage        | Percentage of population covered by public health insurance   |
+| pctpubliccoveragealone   | Percentage of population covered by public health insurance only |
+| pctwhite                 | Percentage of White population                                |
+| pctblack                 | Percentage of Black population                                |
+| pctasian                 | Percentage of Asian population                                |
+| pctotherrace             | Percentage of population belonging to other races             |
+| pctmarriedhouseholds     | Percentage of married households                              |
+| birthrate                | Birth rate in the region                                      |
 
-avgdeathsperyear: Average number of deaths due to cancer per year.
+## FIRST CHECK AFTER CLEANING
 
-target_deathrate: Target death rate due to cancer.
-
-incidencerate: Incidence rate of cancer.
-
-medincome: Median income in the region.
-
-popest2015: Estimated population in 2015.
-
-povertypercent: Percentage of population below the poverty line.
-
-studypercap: Per capita number of cancer-related clinical trials conducted.
-
-binnedinc: Binned median income.
-
-medianage: Median age in the region.
-
-pctprivatecoveragealone: Percentage of population covered by private health insurance alone.
-
-pctempprivcoverage: Percentage of population covered by employee-provided private health insurance.
-
-pctpubliccoverage: Percentage of population covered by public health insurance.
-
-pctpubliccoveragealone: Percentage of population covered by public health insurance only.
-
-pctwhite: Percentage of White population.
-
-pctblack: Percentage of Black population.
-
-pctasian: Percentage of Asian population.
-
-pctotherrace: Percentage of population belonging to other races.
-
-pctmarriedhouseholds: Percentage of married households.
-
-birthrate: Birth rate in the region.
-
-# FIRST CHECK AFTER CLEANING
-
-## (*avghouseholdsize_data*)
+### (*avghouseholdsize_data*)
 
 | statefips | countyfips | avghouseholdsize | geography                             |
 |-----------|------------|------------------|---------------------------------------|
@@ -55,7 +38,7 @@ birthrate: Birth rate in the region.
 | 2         | 50         | 3.86             | Bethel Census Area, Alaska            |
 | 2         | 60         | 2.50             | Bristol Bay Borough, Alaska           |
 
-### Non-null checking
+### Non-null checking (avghouseholdsize_data)
 
 | Column            | Non-Null Count | Dtype   |
 |-------------------|----------------|---------|
@@ -68,7 +51,7 @@ birthrate: Birth rate in the region.
 
 dtypes: float64(1), int64(2), object(1)
 
-### Missing values and duplicate checking
+### Missing values and duplicate checking (avghouseholdsize_data)
 
 | Column            | Missing Values |
 |-------------------|----------------|
@@ -78,7 +61,7 @@ dtypes: float64(1), int64(2), object(1)
 | geography         | 0              |
 | dtype             | int64          |
 
-## (*cancereg_data*)
+### (*cancereg_data*)
 
 | avganncount | avgdeathsperyear | target_deathrate | incidencerate | medincome | popest2015 | pctwhite  | pctblack | pctasian | pctotherrace | pctmarriedhouseholds | birthrate |
 |-------------|------------------|------------------|---------------|-----------|------------|-----------|----------|----------|--------------|----------------------|-----------|
@@ -130,41 +113,43 @@ dtypes: float64(1), int64(2), object(1)
 
 dtypes: float64(28), int64(3), object(2)
 
-*Missing values and duplicate checking*
-avganncount                0
-avgdeathsperyear           0
-target_deathrate           0
-incidencerate              0
-medincome                  0
-popest2015                 0
-povertypercent             0
-studypercap                0
-binnedinc                  0
-medianage                  0
-medianagemale              0
-medianagefemale            0
-geography                  0
-percentmarried             0
-pctnohs18_24               0
-pcths18_24                 0
-pctsomecol18_24            0
-pctbachdeg18_24            0
-pcths25_over               0
-pctbachdeg25_over          0
-pctemployed16_over         0
-pctunemployed16_over       0
-pctprivatecoverage         0
-pctprivatecoveragealone    0
-pctempprivcoverage         0
-pctpubliccoverage          0
-pctpubliccoveragealone     0
-pctwhite                   0
-pctblack                   0
-pctasian                   0
-pctotherrace               0
-pctmarriedhouseholds       0
-birthrate                  0
-dtype: int64
+### Missing values and duplicate checking (cancereg_data)
+
+| Column                   | Missing Values |
+|--------------------------|----------------|
+| avganncount              | 0              |
+| avgdeathsperyear         | 0              |
+| target_deathrate         | 0              |
+| incidencerate            | 0              |
+| medincome                | 0              |
+| popest2015               | 0              |
+| povertypercent           | 0              |
+| studypercap              | 0              |
+| binnedinc                | 0              |
+| medianage                | 0              |
+| medianagemale            | 0              |
+| medianagefemale          | 0              |
+| geography                | 0              |
+| percentmarried           | 0              |
+| pctnohs18_24             | 0              |
+| pcths18_24               | 0              |
+| pctsomecol18_24          | 0              |
+| pctbachdeg18_24          | 0              |
+| pcths25_over             | 0              |
+| pctbachdeg25_over        | 0              |
+| pctemployed16_over       | 0              |
+| pctunemployed16_over     | 0              |
+| pctprivatecoverage       | 0              |
+| pctprivatecoveragealone  | 0              |
+| pctempprivcoverage       | 0              |
+| pctpubliccoverage        | 0              |
+| pctpubliccoveragealone   | 0              |
+| pctwhite                 | 0              |
+| pctblack                 | 0              |
+| pctasian                 | 0              |
+| pctotherrace             | 0              |
+| pctmarriedhouseholds     | 0              |
+| birthrate                | 0              |
 
 ??=> 2 datasets have 1 common column: geography
 ??=> 2 datasets dont need to clean anymore
