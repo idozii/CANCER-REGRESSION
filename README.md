@@ -1,4 +1,8 @@
-!! Information
+
+# Project Title
+
+This dataset contains information about cancer cases, deaths, and related demographic data for various regions
+
 avganncount: Average number of cancer cases diagnosed annually.
 avgdeathsperyear: Average number of deaths due to cancer per year.
 target_deathrate: Target death rate due to cancer.
@@ -29,13 +33,15 @@ statefips  countyfips  avghouseholdsize                           geography
 3          2          50              3.86          Bethel Census Area, Alaska
 4          2          60              2.50         Bristol Bay Borough, Alaska
 
-*Non-null checking*
- #   Column            Non-Null Count  Dtype  
+## Non-null checking
+
+# Column            Non-Null Count  Dtype
+
 ---  ------            --------------  -----  
  0   statefips         3220 non-null   int64  
  1   countyfips        3220 non-null   int64  
  2   avghouseholdsize  3220 non-null   float64
- 3   geography         3220 non-null   object 
+3   geography         3220 non-null   object
 dtypes: float64(1), int64(2), object(1)   
 
 *Missing values and duplicate checking*
@@ -53,7 +59,8 @@ avganncount  avgdeathsperyear  target_deathrate  incidencerate  medincome  popes
 3        427.0               202             194.8          430.4      44243       75882  ...  91.744686  0.782626  1.161359      1.362643             51.021514   4.603841
 4         57.0                26             144.4          350.1      49955       10321  ...  94.104024  0.270192  0.665830      0.492135             54.027460   6.796657
 
-*Non-null checking*
+### Non-null checking
+
 #   Column                   Non-Null Count  Dtype  
 ---  ------                   --------------  -----  
  0   avganncount              3047 non-null   float64
