@@ -255,15 +255,15 @@ Plot for further validation.
 
 Plot for target death rate (3 plots based on teacher's requirement)
 
-### Graph1: histogram of target_deathrate
+### Graph1: Histogram of target_deathrate
 
 ![Histogram of target_deathrate](/figure/Figure_1.png)
 
-### Graph2: boxplot of target_deathrate
+### Graph2: Boxplot of target_deathrate with bennedInc
 
 ![Boxplot of target_deathrate with bennedInc](/figure/Figure_2.png)
 
-### Graph3: pairplot of target_deathrate with other important features
+### Graph3: Pairplot of target_deathrate with other important features
 
 ![Pairplot of target_deathrate with other important features](/figure/Figure_3.png)
 
