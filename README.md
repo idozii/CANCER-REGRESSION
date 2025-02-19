@@ -43,7 +43,9 @@ pctmarriedhouseholds: Percentage of married households.
 
 birthrate: Birth rate in the region.
 
-# FIRST CHECK AFTER CLEANING (*avghouseholdsize_data*)
+# FIRST CHECK AFTER CLEANING
+
+## (*avghouseholdsize_data*)
 
 | statefips | countyfips | avghouseholdsize | geography                             |
 |-----------|------------|------------------|---------------------------------------|
@@ -53,7 +55,7 @@ birthrate: Birth rate in the region.
 | 2         | 50         | 3.86             | Bethel Census Area, Alaska            |
 | 2         | 60         | 2.50             | Bristol Bay Borough, Alaska           |
 
-## Non-null checking
+### Non-null checking
 
 | Column            | Non-Null Count | Dtype   |
 |-------------------|----------------|---------|
@@ -62,11 +64,11 @@ birthrate: Birth rate in the region.
 | avghouseholdsize  | 3220 non-null  | float64 |
 | geography         | 3220 non-null  | object  |
 
-### Data types
+#### Data types
 
 dtypes: float64(1), int64(2), object(1)
 
-## Missing values and duplicate checking
+### Missing values and duplicate checking
 
 | Column            | Missing Values |
 |-------------------|----------------|
@@ -76,7 +78,7 @@ dtypes: float64(1), int64(2), object(1)
 | geography         | 0              |
 | dtype             | int64          |
 
-# (*cancereg_data*)
+## (*cancereg_data*)
 
 | avganncount | avgdeathsperyear | target_deathrate | incidencerate | medincome | popest2015 | pctwhite  | pctblack | pctasian | pctotherrace | pctmarriedhouseholds | birthrate |
 |-------------|------------------|------------------|---------------|-----------|------------|-----------|----------|----------|--------------|----------------------|-----------|
@@ -86,7 +88,7 @@ dtypes: float64(1), int64(2), object(1)
 | 427.0       | 202              | 194.8            | 430.4         | 44243     | 75882      | 91.744686 | 0.782626 | 1.161359 | 1.362643     | 51.021514             | 4.603841  |
 | 57.0        | 26               | 144.4            | 350.1         | 49955     | 10321      | 94.104024 | 0.270192 | 0.665830 | 0.492135     | 54.027460             | 6.796657  |
 
-## Non-null checking
+### Non-null checking (cancereg_data)
 
 | Column                   | Non-Null Count | Dtype   |
 |--------------------------|----------------|---------|
@@ -124,7 +126,7 @@ dtypes: float64(1), int64(2), object(1)
 | pctmarriedhouseholds     | 3047 non-null  | float64 |
 | birthrate                | 3047 non-null  | float64 |
 
-### Data types
+#### Data types (cancereg_data)
 
 dtypes: float64(28), int64(3), object(2)
 
