@@ -43,25 +43,27 @@ pctmarriedhouseholds: Percentage of married households.
 
 birthrate: Birth rate in the region.
 
-# FIRST CHECK AFTER CLEANING
+# FIRST CHECK AFTER CLEANING (*avghouseholdsize_data*)
 
-*avghouseholdsize_data*
-statefips  countyfips  avghouseholdsize                           geography
-0          2          13              2.43      Aleutians East Borough, Alaska
-1          2          16              3.59  Aleutians West Census Area, Alaska
-2          2          20              2.77      Anchorage Municipality, Alaska
-3          2          50              3.86          Bethel Census Area, Alaska
-4          2          60              2.50         Bristol Bay Borough, Alaska
+| statefips | countyfips | avghouseholdsize | geography                             |
+|-----------|------------|------------------|---------------------------------------|
+| 2         | 13         | 2.43             | Aleutians East Borough, Alaska        |
+| 2         | 16         | 3.59             | Aleutians West Census Area, Alaska    |
+| 2         | 20         | 2.77             | Anchorage Municipality, Alaska        |
+| 2         | 50         | 3.86             | Bethel Census Area, Alaska            |
+| 2         | 60         | 2.50             | Bristol Bay Borough, Alaska           |
 
 ## Non-null checking
 
-# Column            Non-Null Count  Dtype
+| Column            | Non-Null Count | Dtype   |
+|-------------------|----------------|---------|
+| statefips         | 3220 non-null  | int64   |
+| countyfips        | 3220 non-null  | int64   |
+| avghouseholdsize  | 3220 non-null  | float64 |
+| geography         | 3220 non-null  | object  |
 
----  ------            --------------  -----  
- 0   statefips         3220 non-null   int64  
- 1   countyfips        3220 non-null   int64  
- 2   avghouseholdsize  3220 non-null   float64
-3   geography         3220 non-null   object
+## Data types
+
 dtypes: float64(1), int64(2), object(1)
 
 *Missing values and duplicate checking*
