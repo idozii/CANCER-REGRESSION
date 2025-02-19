@@ -28,7 +28,7 @@ This dataset contains information about cancer cases, deaths, and related demogr
 
 ## FIRST CHECK AFTER CLEANING
 
-### (*avghouseholdsize_data*)
+### *avghouseholdsize_data*
 
 | statefips | countyfips | avghouseholdsize | geography                             |
 |-----------|------------|------------------|---------------------------------------|
@@ -47,8 +47,6 @@ This dataset contains information about cancer cases, deaths, and related demogr
 | avghouseholdsize  | 3220 non-null  | float64 |
 | geography         | 3220 non-null  | object  |
 
-#### Data types
-
 dtypes: float64(1), int64(2), object(1)
 
 ### Missing values and duplicate checking (avghouseholdsize_data)
@@ -61,7 +59,7 @@ dtypes: float64(1), int64(2), object(1)
 | geography         | 0              |
 | dtype             | int64          |
 
-### (*cancereg_data*)
+### *cancereg_data*
 
 | avganncount | avgdeathsperyear | target_deathrate | incidencerate | medincome | popest2015 | pctwhite  | pctblack | pctasian | pctotherrace | pctmarriedhouseholds | birthrate |
 |-------------|------------------|------------------|---------------|-----------|------------|-----------|----------|----------|--------------|----------------------|-----------|
@@ -109,8 +107,6 @@ dtypes: float64(1), int64(2), object(1)
 | pctmarriedhouseholds     | 3047 non-null  | float64 |
 | birthrate                | 3047 non-null  | float64 |
 
-#### Data types (cancereg_data)
-
 dtypes: float64(28), int64(3), object(2)
 
 ### Missing values and duplicate checking (cancereg_data)
@@ -151,100 +147,107 @@ dtypes: float64(28), int64(3), object(2)
 | pctmarriedhouseholds     | 0              |
 | birthrate                | 0              |
 
-??=> 2 datasets have 1 common column: geography
-??=> 2 datasets dont need to clean anymore
-??=> merge for plotting and predicting
+### Feedback
 
-!!Merged_data
-*merged_data*
-statefips  countyfips  avghouseholdsize                          geography  avganncount  ...  pctblack  pctasian  pctotherrace  pctmarriedhouseholds  birthrate
-0          2         100              2.12             Haines Borough, Alaska         13.0  ...  0.039062  3.007812      0.507812             47.789116   5.374280
-1          2         122              2.57    Kenai Peninsula Borough, Alaska        266.0  ...  0.634382  1.279251      0.559235             51.021643   5.680094
-2          2         130              2.55  Ketchikan Gateway Borough, Alaska         63.0  ...  0.423389  7.307103      0.656982             46.667932   4.936668
-3          2         290              2.81  Yukon-Koyukuk Census Area, Alaska         27.0  ...  0.301205  0.460666      0.212615             36.377397   6.744604
-4          1          19              2.28           Cherokee County, Alabama        158.0  ...  4.925408  0.338357      0.065365             57.173258   4.687790
-[5 rows x 36 columns]
+2 datasets have 1 common column: geography.
 
-*Non-null checking*
- #   Column                   Non-Null Count  Dtype  
----  ------                   --------------  -----  
- 0   statefips                591 non-null    int64  
- 1   countyfips               591 non-null    int64  
- 2   avghouseholdsize         591 non-null    float64
- 3   geography                591 non-null    object 
- 4   avganncount              591 non-null    float64
- 5   avgdeathsperyear         591 non-null    int64
- 6   target_deathrate         591 non-null    float64
- 7   incidencerate            591 non-null    float64
- 8   medincome                591 non-null    int64
- 9   popest2015               591 non-null    int64
- 10  povertypercent           591 non-null    float64
- 11  studypercap              591 non-null    float64
- 12  binnedinc                591 non-null    object
- 13  medianage                591 non-null    float64
- 14  medianagemale            591 non-null    float64
- 15  medianagefemale          591 non-null    float64
- 16  percentmarried           591 non-null    float64
- 17  pctnohs18_24             591 non-null    float64
- 18  pcths18_24               591 non-null    float64
- 19  pctsomecol18_24          591 non-null    float64
- 20  pctbachdeg18_24          591 non-null    float64
- 21  pcths25_over             591 non-null    float64
- 22  pctbachdeg25_over        591 non-null    float64
- 23  pctemployed16_over       591 non-null    float64
- 24  pctunemployed16_over     591 non-null    float64
- 25  pctprivatecoverage       591 non-null    float64
- 26  pctprivatecoveragealone  591 non-null    float64
- 27  pctempprivcoverage       591 non-null    float64
- 28  pctpubliccoverage        591 non-null    float64
- 29  pctpubliccoveragealone   591 non-null    float64
- 30  pctwhite                 591 non-null    float64
- 31  pctblack                 591 non-null    float64
- 32  pctasian                 591 non-null    float64
- 33  pctotherrace             591 non-null    float64
- 34  pctmarriedhouseholds     591 non-null    float64
- 35  birthrate                591 non-null    float64
-dtypes: float64(29), int64(5), object(2)
+2 datasets don't need to clean anymore.
 
-*Missing values and duplicate checking*
-statefips                  0
-countyfips                 0
-avghouseholdsize           0
-geography                  0
-avganncount                0
-avgdeathsperyear           0
-target_deathrate           0
-incidencerate              0
-medincome                  0
-popest2015                 0
-povertypercent             0
-studypercap                0
-binnedinc                  0
-medianage                  0
-medianagemale              0
-medianagefemale            0
-percentmarried             0
-pctnohs18_24               0
-pcths18_24                 0
-pctsomecol18_24            0
-pctbachdeg18_24            0
-pcths25_over               0
-pctbachdeg25_over          0
-pctemployed16_over         0
-pctunemployed16_over       0
-pctprivatecoverage         0
-pctprivatecoveragealone    0
-pctempprivcoverage         0
-pctpubliccoverage          0
-pctpubliccoveragealone     0
-pctwhite                   0
-pctblack                   0
-pctasian                   0
-pctotherrace               0
-pctmarriedhouseholds       0
-birthrate                  0
-dtype: int64
+Approve merge for plotting and predicting.
 
+## MERGING DATA
+
+### *merged_data*
+
+| statefips | countyfips | avghouseholdsize | geography                          | avganncount | pctblack | pctasian | pctotherrace | pctmarriedhouseholds | birthrate |
+|-----------|-------------|------------------|------------------------------------|-------------|----------|----------|--------------|----------------------|-----------|
+| 2         | 100         | 2.12             | Haines Borough, Alaska             | 13.0        | 0.039062 | 3.007812 | 0.507812     | 47.789116             | 5.374280  |
+| 2         | 122         | 2.57             | Kenai Peninsula Borough, Alaska    | 266.0       | 0.634382 | 1.279251 | 0.559235     | 51.021643             | 5.680094  |
+| 2         | 130         | 2.55             | Ketchikan Gateway Borough, Alaska  | 63.0        | 0.423389 | 7.307103 | 0.656982     | 46.667932             | 4.936668  |
+| 2         | 290         | 2.81             | Yukon-Koyukuk Census Area, Alaska  | 27.0        | 0.301205 | 0.460666 | 0.212615     | 36.377397             | 6.744604  |
+| 1         | 19          | 2.28             | Cherokee County, Alabama           | 158.0       | 4.925408 | 0.338357 | 0.065365     | 57.173258             | 4.687790  |
+
+### Non-null checking
+
+| Column                   | Non-Null Count | Dtype   |
+|--------------------------|----------------|---------|
+| statefips                | 591            | int64   |
+| countyfips               | 591            | int64   |
+| avghouseholdsize         | 591            | float64 |
+| geography                | 591            | object  |
+| avganncount              | 591            | float64 |
+| avgdeathsperyear         | 591            | int64   |
+| target_deathrate         | 591            | float64 |
+| incidencerate            | 591            | float64 |
+| medincome                | 591            | int64   |
+| popest2015               | 591            | int64   |
+| povertypercent           | 591            | float64 |
+| studypercap              | 591            | float64 |
+| binnedinc                | 591            | object  |
+| medianage                | 591            | float64 |
+| medianagemale            | 591            | float64 |
+| medianagefemale          | 591            | float64 |
+| percentmarried           | 591            | float64 |
+| pctnohs18_24             | 591            | float64 |
+| pcths18_24               | 591            | float64 |
+| pctsomecol18_24          | 591            | float64 |
+| pctbachdeg18_24          | 591            | float64 |
+| pcths25_over             | 591            | float64 |
+| pctbachdeg25_over        | 591            | float64 |
+| pctemployed16_over       | 591            | float64 |
+| pctunemployed16_over     | 591            | float64 |
+| pctprivatecoverage       | 591            | float64 |
+| pctprivatecoveragealone  | 591            | float64 |
+| pctempprivcoverage       | 591            | float64 |
+| pctpubliccoverage        | 591            | float64 |
+| pctpubliccoveragealone   | 591            | float64 |
+| pctwhite                 | 591            | float64 |
+| pctblack                 | 591            | float64 |
+| pctasian                 | 591            | float64 |
+| pctotherrace             | 591            | float64 |
+| pctmarriedhouseholds     | 591            | float64 |
+| birthrate                | 591            | float64 |
+
+### Missing values and duplicate checking
+
+| Column                   | Missing Values |
+|--------------------------|----------------|
+| statefips                | 0              |
+| countyfips               | 0              |
+| avghouseholdsize         | 0              |
+| geography                | 0              |
+| avganncount              | 0              |
+| avgdeathsperyear         | 0              |
+| target_deathrate         | 0              |
+| incidencerate            | 0              |
+| medincome                | 0              |
+| popest2015               | 0              |
+| povertypercent           | 0              |
+| studypercap              | 0              |
+| binnedinc                | 0              |
+| medianage                | 0              |
+| medianagemale            | 0              |
+| medianagefemale          | 0              |
+| percentmarried           | 0              |
+| pctnohs18_24             | 0              |
+| pcths18_24               | 0              |
+| pctsomecol18_24          | 0              |
+| pctbachdeg18_24          | 0              |
+| pcths25_over             | 0              |
+| pctbachdeg25_over        | 0              |
+| pctemployed16_over       | 0              |
+| pctunemployed16_over     | 0              |
+| pctprivatecoverage       | 0              |
+| pctprivatecoveragealone  | 0              |
+| pctempprivcoverage       | 0              |
+| pctpubliccoverage        | 0              |
+| pctpubliccoveragealone   | 0              |
+| pctwhite                 | 0              |
+| pctblack                 | 0              |
+| pctasian                 | 0              |
+| pctotherrace             | 0              |
+| pctmarriedhouseholds     | 0              |
+| birthrate                | 0              |
 
 ??=> Noted that target death rate is the most important feature to predict
 ??=> Plot for further validation
