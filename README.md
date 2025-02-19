@@ -47,8 +47,6 @@ This dataset contains information about cancer cases, deaths, and related demogr
 | avghouseholdsize  | 3220 non-null  | float64 |
 | geography         | 3220 non-null  | object  |
 
-dtypes: float64(1), int64(2), object(1)
-
 ### Missing values and duplicate checking (avghouseholdsize_data)
 
 | Column            | Missing Values |
@@ -106,8 +104,6 @@ dtypes: float64(1), int64(2), object(1)
 | pctotherrace             | 3047 non-null  | float64 |
 | pctmarriedhouseholds     | 3047 non-null  | float64 |
 | birthrate                | 3047 non-null  | float64 |
-
-dtypes: float64(28), int64(3), object(2)
 
 ### Missing values and duplicate checking (cancereg_data)
 
@@ -261,15 +257,15 @@ Plot for target death rate (3 plots based on teacher's requirement)
 
 ### Graph1: histogram of target_deathrate
 
-Figure_1.png
+![Histogram of target_deathrate](/figure/Figure_1.png)
 
 ### Graph2: boxplot of target_deathrate
 
-Figure_2.png
+![Boxplot of target_deathrate with bennedInc](/figure/Figure_2.png)
 
 ### Graph3: pairplot of target_deathrate with other important features
 
-Figure_3.png
+![Pairplot of target_deathrate with other important features](/figure/Figure_3.png)
 
 ### Evaluation (PLOTTING_PART)
 
