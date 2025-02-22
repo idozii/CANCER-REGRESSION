@@ -23,19 +23,19 @@ cancereg_data['pctprivatecoveragealone'] = cancereg_data['pctprivatecoveragealon
 merged_data = pd.merge(avghouseholdsize_data, cancereg_data, on='geography', how='inner')
 
 #! Plot the data
-##Target deathrate
-# sns.histogram
-# sns.histplot(merged_data['target_deathrate'], bins=50, kde=True)
-# plt.show()
+###Target deathrate
+# # sns.histogram of target_deathrate
+sns.histplot(merged_data['target_deathrate'], bins=50, kde=True)
+plt.show()
 
-# # sns.boxplot of target_deathrate
-# sns.boxplot(data=merged_data, y='target_deathrate', palette='Set2')
-# plt.show()
+# sns.boxplot of target_deathrate
+sns.boxplot(data=merged_data, y='target_deathrate', palette='Set2')
+plt.show()
 
-# # sns.boxplot of target_deathrate with binnedinc
-# sns.boxplot(data=merged_data, x='binnedinc', y='target_deathrate', hue='binnedinc', palette='Set2', legend=False)
-# plt.show()
+# sns.boxplot of target_deathrate with binnedinc
+sns.boxplot(data=merged_data, x='binnedinc', y='target_deathrate', hue='binnedinc', palette='Set2', legend=False)
+plt.show()
 
-# # sns.pairplot
-# sns.pairplot(merged_data[['pctpubliccoveragealone', 'povertypercent', 'incidencerate', 'pctpubliccoverage', 'target_deathrate']])
-# plt.show()
+# sns.pairplot
+sns.pairplot(merged_data[['pctpubliccoveragealone', 'povertypercent', 'incidencerate', 'pctpubliccoverage', 'target_deathrate']])
+plt.show()
