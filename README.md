@@ -265,7 +265,7 @@ This part describes the visualization of the data.
 
 ### Graph 2: Boxplot of target_deathrate
 
-![Boxplot of target_deathrate with bennedInc](/figure/Figure_2.png)
+![Boxplot of target_deathrate](/figure/Figure_2.png)
 
 ### Graph 3: Boxplot of target_deathrate with bennedInc
 
@@ -278,6 +278,60 @@ This part describes the visualization of the data.
 ### Evaluation (PLOTTING_PART)
 
 Based on the plots, we can see that the target death rate is normally distributed and has a strong correlation with other features.
+
+## CHOOSING FEATURES FOR PREDICTING
+
+This section demonstrates how to select the most important features for predicting the target death rate using a Random Forest Regressor.
+
+1. **Prepare the Data**: Drop unnecessary columns and split the data into training and testing sets.
+2. **Train the Model**: Use `RandomForestRegressor` to train the model on the training data.
+3. **Evaluate the Model**: Predict the target values for the test set and calculate the Mean Squared Error (MSE) and R2 score.
+4. **Feature Importance**: Extract and display the importance of each feature.
+5. **Plot Feature Importance**: Visualize the feature importance using a bar plot.
+
+### Feature Importance
+
+| Rank | Feature                   | Importance |
+|------|---------------------------|------------|
+| 1    | pctbachdeg25_over         | 0.204280   |
+| 2    | incidencerate             | 0.190924   |
+| 3    | medincome                 | 0.053300   |
+| 4    | pcths25_over              | 0.044926   |
+| 5    | avgdeathsperyear          | 0.041757   |
+| 6    | pctpubliccoveragealone    | 0.035952   |
+| 7    | pctprivatecoverage        | 0.034321   |
+| 8    | avghouseholdsize          | 0.027914   |
+| 9    | povertypercent            | 0.026800   |
+| 10   | pctblack                  | 0.024291   |
+| 11   | pctunemployed16_over      | 0.020893   |
+| 12   | pctotherrace              | 0.020618   |
+| 13   | pcths18_24                | 0.019416   |
+| 14   | popest2015                | 0.018593   |
+| 15   | countyfips                | 0.017569   |
+| 16   | birthrate                 | 0.017296   |
+| 17   | pctwhite                  | 0.016858   |
+| 18   | pctemployed16_over        | 0.016714   |
+| 19   | pctasian                  | 0.016076   |
+| 20   | pctmarriedhouseholds      | 0.015888   |
+| 21   | avganncount               | 0.014417   |
+| 22   | medianagefemale           | 0.014215   |
+| 23   | pctnohs18_24              | 0.013672   |
+| 24   | pctbachdeg18_24           | 0.013510   |
+| 25   | percentmarried            | 0.013420   |
+| 26   | pctpubliccoverage         | 0.011086   |
+| 27   | pctempprivcoverage        | 0.010603   |
+| 28   | medianagemale             | 0.009289   |
+| 29   | statefips                 | 0.009099   |
+| 30   | pctprivatecoveragealone   | 0.008674   |
+| 31   | medianage                 | 0.008475   |
+| 32   | pctsomecol18_24           | 0.004791   |
+| 33   | studypercap               | 0.004365   |
+
+### Evaluation (FEATURE_SELECTION_PART)
+
+The Random Forest Regressor model shows that the most important features for predicting the target death rate are `pctbachdeg25_over`, `incidencerate`, `medincome`, `pcths25_over`, and `avgdeathsperyear`.
+
+![Plot of these features](/figure/Figure_5.png)
 
 ## PREDICTING
 
