@@ -8,6 +8,7 @@ from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import RandomForestRegressor
+from sklearn.tree import DecisionTreeRegressor
 from sklearn.model_selection import GridSearchCV
 sns.set_style('whitegrid')
 sns.set_palette('colorblind')
@@ -55,9 +56,12 @@ gbr_model.fit(X_train, y_train)
 y_pred_gbr = gbr_model.predict(X_test)
 mse_gbr = mean_squared_error(y_test, y_pred_gbr)
 r2_gbr = r2_score(y_test, y_pred_gbr)
-predictions = pd.DataFrame({'Actual': y_test, 'Predicted': y_pred_gbr})
-predictions['Difference'] = predictions['Actual'] - predictions['Predicted']
-print(predictions)
+test_data_gbr = X_test.copy().iloc[[1]]
+prediction = gbr_model.predict(test_data_gbr)
+print("Gradient Boosting Regressor")
+print(f'Mean Squared Error: {mse_gbr}')
+print(f'R2 Score: {r2_gbr}')
+print(f"The predicted value is {prediction}. The actual value is {y_test.iloc[1]}\n")
 
 # Linear Regression
 scaler = StandardScaler()
@@ -68,29 +72,35 @@ lr_model.fit(X_train_scaled, y_train)
 y_pred_lr = lr_model.predict(X_test_scaled)
 mse_lr = mean_squared_error(y_test, y_pred_lr)
 r2_lr = r2_score(y_test, y_pred_lr)
-predictions = pd.DataFrame({'Actual': y_test, 'Predicted': y_pred_lr})
-predictions['Difference'] = predictions['Actual'] - predictions['Predicted']
-print(predictions)
+test_data = X_test_scaled[[1]]
+prediction = lr_model.predict(test_data)
+print("Linear Regression")
+print(f'Mean Squared Error: {mse_lr}')
+print(f'R2 Score: {r2_lr}')
+print(f"The predicted value is {prediction}. The actual value is {y_test.iloc[1]}\n")
 
 # Random Forest Regressor
-rf_model = RandomForestRegressor(n_estimators=200, random_state=42)
+rf_model = RandomForestRegressor(n_estimators=300, max_depth=10, random_state=42)
 rf_model.fit(X_train, y_train)
 y_pred_rf = rf_model.predict(X_test)
 mse_rf = mean_squared_error(y_test, y_pred_rf)
 r2_rf = r2_score(y_test, y_pred_rf)
-predictions = pd.DataFrame({'Actual': y_test, 'Predicted': y_pred_rf})
-predictions['Difference'] = predictions['Actual'] - predictions['Predicted']
-print(predictions)
-
-# Print results
-print("Linear Regression")
-print(f'Mean Squared Error: {mse_lr}')
-print(f'R2 Score: {r2_lr}\n')
-
+test_data_rf = X_test.copy().iloc[[1]]
+prediction = rf_model.predict(test_data_rf)
 print("Random Forest Regressor")
 print(f'Mean Squared Error: {mse_rf}')
-print(f'R2 Score: {r2_rf}\n')
+print(f'R2 Score: {r2_rf}')
+print(f"The predicted value is {prediction}. The actual value is {y_test.iloc[1]}\n")
 
-print("Gradient Boosting Regressor")
-print(f'Mean Squared Error: {mse_gbr}')
-print(f'R2 Score: {r2_gbr}\n')
+# Decision Tree Regressor
+dt_model = DecisionTreeRegressor(max_depth=10, min_samples_leaf=10, min_samples_split=10, random_state=42)
+dt_model.fit(X_train, y_train)
+y_pred_dt = dt_model.predict(X_test)
+mse_dt = mean_squared_error(y_test, y_pred_dt)
+r2_dt = r2_score(y_test, y_pred_dt)
+test_data_dt = X_test.copy().iloc[[1]]
+prediction = dt_model.predict(test_data_dt)
+print("Decision Tree Regressor")
+print(f'Mean Squared Error: {mse_dt}')
+print(f'R2 Score: {r2_dt}')
+print(f"The predicted value is {prediction}. The actual value is {y_test.iloc[1]}\n")
