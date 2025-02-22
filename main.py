@@ -5,6 +5,9 @@ import seaborn as sns
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.ensemble import GradientBoostingRegressor
+from sklearn.linear_model import LinearRegression
+from sklearn.preprocessing import StandardScaler
+from sklearn.ensemble import RandomForestRegressor
 sns.set_style('whitegrid')
 sns.set_palette('colorblind')
 
@@ -44,19 +47,43 @@ X = merged_data[features]
 y = merged_data['target_deathrate']
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-#! Train the model
+#! Train and evaluate the model
+# Gradient Boosting Regressor
 gbr_model = GradientBoostingRegressor(n_estimators=50, learning_rate=0.1, max_depth=3, random_state=42)
 gbr_model.fit(X_train, y_train)
-
-#! Evaluate the model
 y_pred = gbr_model.predict(X_test)
 mse = mean_squared_error(y_test, y_pred)
 r2 = r2_score(y_test, y_pred)
+predictions = pd.DataFrame({'Actual': y_test, 'Predicted': y_pred})
+predictions['Difference'] = predictions['Actual'] - predictions['Predicted']
+print(predictions)
 print(f'Mean Squared Error: {mse}')
 print(f'R2 Score: {r2}')
 
-#! Plot the results
-plt.scatter(y_test, y_pred)
-plt.xlabel('True Values')
-plt.ylabel('Predictions')
-plt.show()
+
+# Linear Regression
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+lr_model = LinearRegression()
+lr_model.fit(X_train_scaled, y_train)
+y_pred = lr_model.predict(X_test_scaled)
+mse = mean_squared_error(y_test, y_pred)
+r2 = r2_score(y_test, y_pred)
+predictions = pd.DataFrame({'Actual': y_test, 'Predicted': y_pred})
+predictions['Difference'] = predictions['Actual'] - predictions['Predicted']
+print(predictions)
+print(f'Mean Squared Error: {mse}')
+print(f'R2 Score: {r2}')
+
+# Random Forest Regressor
+rf_model = RandomForestRegressor(n_estimators=200, random_state=42)
+rf_model.fit(X_train, y_train)
+y_pred = rf_model.predict(X_test)
+mse = mean_squared_error(y_test, y_pred)
+r2 = r2_score(y_test, y_pred)
+predictions = pd.DataFrame({'Actual': y_test, 'Predicted': y_pred})
+predictions['Difference'] = predictions['Actual'] - predictions['Predicted']
+print(predictions)
+print(f'Mean Squared Error: {mse}')
+print(f'R2 Score: {r2}')

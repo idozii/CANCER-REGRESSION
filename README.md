@@ -279,6 +279,28 @@ This part describes the visualization of the data.
 
 Based on the plots, we can see that the target death rate is normally distributed and has a strong correlation with other features.
 
+## Gradient Boosting Regressor with Grid Search
+
+This project demonstrates the use of Gradient Boosting Regressor with Grid Search for hyperparameter tuning to predict the target death rate.
+
+1. **Define the parameter grid**: Specify the range of hyperparameters to search over, including the number of estimators, learning rate, and maximum depth of the trees.
+
+2. **Initialize the model**: Create an instance of the Gradient Boosting Regressor with a fixed random state for reproducibility.
+
+3. **Perform Grid Search**: Use GridSearchCV to perform an exhaustive search over the specified parameter grid with cross-validation to find the best hyperparameters.
+
+4. **Get the best parameters and train the model**: Retrieve the best parameters from the grid search and train the Gradient Boosting Regressor using these optimal hyperparameters.
+
+5. **Evaluate the model**: Predict the target values for the test set and evaluate the model's performance using Mean Squared Error (MSE) and R2 Score.
+
+### Best Parameters
+
+The best parameters found by Grid Search are as follows:
+
+```python
+{'learning_rate': 0.1, 'max_depth': 3, 'n_estimators': 50}
+```
+
 ## CHOOSING FEATURES FOR PREDICTING
 
 This section demonstrates how to select the most important features for predicting the target death rate using a Random Forest Regressor.
@@ -289,7 +311,7 @@ This section demonstrates how to select the most important features for predicti
 4. **Feature Importance**: Extract and display the importance of each feature.
 5. **Plot Feature Importance**: Visualize the feature importance using a bar plot.
 
-### Feature Importance
+### Feature Importance of Random Forest Regressor
 
 | Rank | Feature                   | Importance |
 |------|---------------------------|------------|
@@ -327,33 +349,15 @@ This section demonstrates how to select the most important features for predicti
 | 32   | pctsomecol18_24           | 0.004791   |
 | 33   | studypercap               | 0.004365   |
 
+### Feature Importance of Gradient Boosting Regressor (after choosing the best features)
+
+![Plot of these relative features](/figure/Figure_6.png)
+
 ### Evaluation (FEATURE_SELECTION_PART)
 
 The Random Forest Regressor model shows that the most important features for predicting the target death rate are `pctbachdeg25_over`, `incidencerate`, `medincome`, `pcths25_over`, and `avgdeathsperyear`.
 
 ![Plot of these features](/figure/Figure_5.png)
-
-# Gradient Boosting Regressor with Grid Search
-
-This project demonstrates the use of Gradient Boosting Regressor with Grid Search for hyperparameter tuning to predict the target death rate.
-
-1. **Define the parameter grid**: Specify the range of hyperparameters to search over, including the number of estimators, learning rate, and maximum depth of the trees.
-
-2. **Initialize the model**: Create an instance of the Gradient Boosting Regressor with a fixed random state for reproducibility.
-
-3. **Perform Grid Search**: Use GridSearchCV to perform an exhaustive search over the specified parameter grid with cross-validation to find the best hyperparameters.
-
-4. **Get the best parameters and train the model**: Retrieve the best parameters from the grid search and train the Gradient Boosting Regressor using these optimal hyperparameters.
-
-5. **Evaluate the model**: Predict the target values for the test set and evaluate the model's performance using Mean Squared Error (MSE) and R2 Score.
-
-## Best Parameters
-
-The best parameters found by Grid Search are as follows:
-
-```python
-{'learning_rate': 0.1, 'max_depth': 3, 'n_estimators': 50}
-```
 
 ## PREDICTING
 
