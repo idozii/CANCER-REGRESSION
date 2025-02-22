@@ -367,4 +367,8 @@ This part will predict the target death rate based on the features.
 
 ### Evaluation (PREDICTING_PART)
 
-The Random Forest Regression model outperforms the other models with the prediction of the target death rate.
+The Gradient Boosting Regressor model outperforms the Random Forest Regressor model in predicting the target death rate based on the selected features.
+
+## CONCLUSION
+
+This project demonstrates the use of Gradient Boosting Regressor with Grid Search for hyperparameter tuning and Random Forest Regressor for feature selection to predict the target death rate based on various demographic and health-related features.
