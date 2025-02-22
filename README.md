@@ -363,13 +363,7 @@ The Random Forest Regressor model shows that the most important features for pre
 
 This part will predict the target death rate based on the features.
 
-| STAGE | LINEAR REGRESSION | RANDOM FOREST REGRESSOR | DECISION TREE REGRESSOR | ACTUAL VALUE |
-|-------|-------------------|-------------------------|-------------------------|--------------|
-| 0     | 186.2             | 171.774                 | 153.1                   | 171.5        |
-| 1     | 180.73            | 169.4                   | 153.1                   | 171.5        |
-| 2     | 175.1             | 162.1                   | 163.9                   | 171.5        |
-| 3     | 184.7             | 171.51                  | 153.1                   | 171.5        |
-| 4     | 188.6             | 171.725                 | 171.3                   | 171.5        |
+![Plot of these models](/figure/Figure_7.png)
 
 ### Evaluation (PREDICTING_PART)
 

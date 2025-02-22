@@ -104,3 +104,27 @@ print("Decision Tree Regressor")
 print(f'Mean Squared Error: {mse_dt}')
 print(f'R2 Score: {r2_dt}')
 print(f"The predicted value is {prediction}. The actual value is {y_test.iloc[1]}\n")
+
+# Collect the results
+models = ['Gradient Boosting', 'Linear Regression', 'Random Forest', 'Decision Tree']
+mse_scores = [mse_gbr, mse_lr, mse_rf, mse_dt]
+r2_scores = [r2_gbr, r2_lr, r2_rf, r2_dt]
+
+# Plot Mean Squared Error
+plt.figure(figsize=(12, 6))
+
+plt.subplot(1, 2, 1)
+plt.bar(models, mse_scores, color=['blue', 'green', 'red', 'purple'])
+plt.title('Mean Squared Error Comparison')
+plt.xlabel('Models')
+plt.ylabel('Mean Squared Error')
+
+# Plot R2 Score
+plt.subplot(1, 2, 2)
+plt.bar(models, r2_scores, color=['blue', 'green', 'red', 'purple'])
+plt.title('R2 Score Comparison')
+plt.xlabel('Models')
+plt.ylabel('R2 Score')
+
+plt.tight_layout()
+plt.show()
