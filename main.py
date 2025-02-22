@@ -4,9 +4,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, r2_score
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.linear_model import LinearRegression
-from sklearn.tree import DecisionTreeRegressor
+from sklearn.ensemble import GradientBoostingRegressor
 sns.set_style('whitegrid')
 sns.set_palette('colorblind')
 
@@ -47,37 +45,18 @@ y = merged_data['target_deathrate']
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
 #! Train the model
-# # Random Forest
-rf = RandomForestRegressor(n_estimators=100, random_state=42)
-rf.fit(X_train, y_train)
-y_pred = rf.predict(X_test)
-print('Random Forest')
-print('MSE:', mean_squared_error(y_test, y_pred))
-print('R2:', r2_score(y_test, y_pred))
+gbr_model = GradientBoostingRegressor(n_estimators=50, learning_rate=0.1, max_depth=3, random_state=42)
+gbr_model.fit(X_train, y_train)
 
-# Linear Regression
-lr = LinearRegression()
-lr.fit(X_train, y_train)
-y_pred = lr.predict(X_test)
-print('Linear Regression')
-print('MSE:', mean_squared_error(y_test, y_pred))
-print('R2:', r2_score(y_test, y_pred))
+#! Evaluate the model
+y_pred = gbr_model.predict(X_test)
+mse = mean_squared_error(y_test, y_pred)
+r2 = r2_score(y_test, y_pred)
+print(f'Mean Squared Error: {mse}')
+print(f'R2 Score: {r2}')
 
-# Decision Tree
-dt = DecisionTreeRegressor(random_state=42)
-dt.fit(X_train, y_train)
-y_pred = dt.predict(X_test)
-print('Decision Tree')
-print('MSE:', mean_squared_error(y_test, y_pred))
-print('R2:', r2_score(y_test, y_pred))
-
-#! Feature Importance
-importances = rf.feature_importances_
-indices = np.argsort(importances)[::-1]
-plt.figure()
-plt.title('Feature Importance')
-plt.bar(range(X_train.shape[1]), importances[indices])
-plt.xticks(range(X_train.shape[1]), [features[i] for i in indices], rotation=90)
+#! Plot the results
+plt.scatter(y_test, y_pred)
+plt.xlabel('True Values')
+plt.ylabel('Predictions')
 plt.show()
-
-

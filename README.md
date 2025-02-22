@@ -333,6 +333,28 @@ The Random Forest Regressor model shows that the most important features for pre
 
 ![Plot of these features](/figure/Figure_5.png)
 
+# Gradient Boosting Regressor with Grid Search
+
+This project demonstrates the use of Gradient Boosting Regressor with Grid Search for hyperparameter tuning to predict the target death rate.
+
+1. **Define the parameter grid**: Specify the range of hyperparameters to search over, including the number of estimators, learning rate, and maximum depth of the trees.
+
+2. **Initialize the model**: Create an instance of the Gradient Boosting Regressor with a fixed random state for reproducibility.
+
+3. **Perform Grid Search**: Use GridSearchCV to perform an exhaustive search over the specified parameter grid with cross-validation to find the best hyperparameters.
+
+4. **Get the best parameters and train the model**: Retrieve the best parameters from the grid search and train the Gradient Boosting Regressor using these optimal hyperparameters.
+
+5. **Evaluate the model**: Predict the target values for the test set and evaluate the model's performance using Mean Squared Error (MSE) and R2 Score.
+
+## Best Parameters
+
+The best parameters found by Grid Search are as follows:
+
+```python
+{'learning_rate': 0.1, 'max_depth': 3, 'n_estimators': 50}
+```
+
 ## PREDICTING
 
 This part will predict the target death rate based on the features.
