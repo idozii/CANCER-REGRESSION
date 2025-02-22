@@ -373,8 +373,9 @@ This part will predict the target death rate based on the features.
 | Linear Regression        | 383.954            | 0.484    | 199.49          | 171.4        |
 | Random Forest Regressor  | 382.370            | 0.486    | 201.31          | 171.4        |
 | Decision Tree Regressor  | 440.264            | 0.408    | 174.58          | 171.4        |
+| Neural Network Regressor | 419.203            | 0.436    | 207.54          | 171.4        |
 
-The Gradient Boosting Regressor model outperforms the other models in predicting the target death rate based on the selected features.
+The Gradient Boosting Regressor model has the lowest Mean Squared Error and the highest R2 Score among the models tested.
 
 ## CONCLUSION
 

@@ -9,7 +9,9 @@ from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.tree import DecisionTreeRegressor
-from sklearn.model_selection import GridSearchCV
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense
+from tensorflow.keras.optimizers import Adam
 sns.set_style('whitegrid')
 sns.set_palette('colorblind')
 
@@ -105,26 +107,22 @@ print(f'Mean Squared Error: {mse_dt}')
 print(f'R2 Score: {r2_dt}')
 print(f"The predicted value is {prediction}. The actual value is {y_test.iloc[1]}\n")
 
-# Collect the results
-models = ['Gradient Boosting', 'Linear Regression', 'Random Forest', 'Decision Tree']
-mse_scores = [mse_gbr, mse_lr, mse_rf, mse_dt]
-r2_scores = [r2_gbr, r2_lr, r2_rf, r2_dt]
-
-# Plot Mean Squared Error
-plt.figure(figsize=(12, 6))
-
-plt.subplot(1, 2, 1)
-plt.bar(models, mse_scores, color=['blue', 'green', 'red', 'purple'])
-plt.title('Mean Squared Error Comparison')
-plt.xlabel('Models')
-plt.ylabel('Mean Squared Error')
-
-# Plot R2 Score
-plt.subplot(1, 2, 2)
-plt.bar(models, r2_scores, color=['blue', 'green', 'red', 'purple'])
-plt.title('R2 Score Comparison')
-plt.xlabel('Models')
-plt.ylabel('R2 Score')
-
-plt.tight_layout()
-plt.show()
+# Neural Network
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+nn_model = Sequential()
+nn_model.add(Dense(64, input_dim=X_train_scaled.shape[1], activation='relu'))
+nn_model.add(Dense(32, activation='relu'))
+nn_model.add(Dense(1))
+nn_model.compile(optimizer=Adam(learning_rate=0.01), loss='mean_squared_error')
+nn_model.fit(X_train_scaled, y_train, epochs=100, batch_size=32, verbose=1)
+y_pred_nn = nn_model.predict(X_test_scaled)
+mse_nn = mean_squared_error(y_test, y_pred_nn)
+r2_nn = r2_score(y_test, y_pred_nn)
+test_data_nn = X_test_scaled[[1]]
+prediction = nn_model.predict(test_data_nn)
+print("Neural Network Regressor")
+print(f'Mean Squared Error: {mse_nn}')
+print(f'R2 Score: {r2_nn}')
+print(f"The predicted value is {prediction}. The actual value is {y_test.iloc[1]}\n")
