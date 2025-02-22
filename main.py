@@ -39,4 +39,3 @@ merged_data = pd.merge(avghouseholdsize_data, cancereg_data, on='geography', how
 # # sns.pairplot
 # sns.pairplot(merged_data[['pctpubliccoveragealone', 'povertypercent', 'incidencerate', 'pctpubliccoverage', 'target_deathrate']])
 # plt.show()
-
