@@ -263,13 +263,17 @@ This part describes the visualization of the data.
 
 ![Histogram of target_deathrate](/figure/Figure_1.png)
 
-### Graph 2: Boxplot of target_deathrate with bennedInc
+### Graph 2: Boxplot of target_deathrate
 
 ![Boxplot of target_deathrate with bennedInc](/figure/Figure_2.png)
 
+### Graph 2: Boxplot of target_deathrate with bennedInc
+
+![Boxplot of target_deathrate with bennedInc](/figure/Figure_3.png)
+
 ### Graph 3: Pairplot of target_deathrate with other important features
 
-![Pairplot of target_deathrate with other important features](/figure/Figure_3.png)
+![Pairplot of target_deathrate with other important features](/figure/Figure_4.png)
 
 ### Evaluation (PLOTTING_PART)
 
