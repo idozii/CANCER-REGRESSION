@@ -349,15 +349,15 @@ This section demonstrates how to select the most important features for predicti
 | 32   | pctsomecol18_24           | 0.004791   |
 | 33   | studypercap               | 0.004365   |
 
-### Feature Importance of Gradient Boosting Regressor (after choosing the best features)
-
-![Plot of these relative features](/figure/Figure_6.png)
-
 ### Evaluation (FEATURE_SELECTION_PART)
 
 The Random Forest Regressor model shows that the most important features for predicting the target death rate are `pctbachdeg25_over`, `incidencerate`, `medincome`, `pcths25_over`, and `avgdeathsperyear`.
 
 ![Plot of these features](/figure/Figure_5.png)
+
+#### Feature Importance of Gradient Boosting Regressor (after choosing the best features)
+
+![Plot of these relative features](/figure/Figure_6.png)
 
 ## PREDICTING
 
