@@ -367,7 +367,14 @@ This part will predict the target death rate based on the features.
 
 ### Evaluation (PREDICTING_PART)
 
-The Gradient Boosting Regressor model outperforms the Random Forest Regressor model in predicting the target death rate based on the selected features.
+| Model                    | Mean Squared Error | R2 Score | Predicted Value | Actual Value |
+|--------------------------|--------------------|----------|-----------------|--------------|
+| Gradient Boosting        | 371.288            | 0.501    | 196.54          | 171.4        |
+| Linear Regression        | 383.954            | 0.484    | 199.49          | 171.4        |
+| Random Forest Regressor  | 382.370            | 0.486    | 201.31          | 171.4        |
+| Decision Tree Regressor  | 440.264            | 0.408    | 174.58          | 171.4        |
+
+The Gradient Boosting Regressor model outperforms the other models in predicting the target death rate based on the selected features.
 
 ## CONCLUSION
 
