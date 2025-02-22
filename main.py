@@ -60,7 +60,6 @@ print(predictions)
 print(f'Mean Squared Error: {mse}')
 print(f'R2 Score: {r2}')
 
-
 # Linear Regression
 scaler = StandardScaler()
 X_train_scaled = scaler.fit_transform(X_train)
