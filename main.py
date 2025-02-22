@@ -8,6 +8,7 @@ from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import RandomForestRegressor
+from sklearn.model_selection import GridSearchCV
 sns.set_style('whitegrid')
 sns.set_palette('colorblind')
 
@@ -51,14 +52,12 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 # Gradient Boosting Regressor
 gbr_model = GradientBoostingRegressor(n_estimators=50, learning_rate=0.1, max_depth=3, random_state=42)
 gbr_model.fit(X_train, y_train)
-y_pred = gbr_model.predict(X_test)
-mse = mean_squared_error(y_test, y_pred)
-r2 = r2_score(y_test, y_pred)
-predictions = pd.DataFrame({'Actual': y_test, 'Predicted': y_pred})
+y_pred_gbr = gbr_model.predict(X_test)
+mse_gbr = mean_squared_error(y_test, y_pred_gbr)
+r2_gbr = r2_score(y_test, y_pred_gbr)
+predictions = pd.DataFrame({'Actual': y_test, 'Predicted': y_pred_gbr})
 predictions['Difference'] = predictions['Actual'] - predictions['Predicted']
 print(predictions)
-print(f'Mean Squared Error: {mse}')
-print(f'R2 Score: {r2}')
 
 # Linear Regression
 scaler = StandardScaler()
@@ -66,23 +65,32 @@ X_train_scaled = scaler.fit_transform(X_train)
 X_test_scaled = scaler.transform(X_test)
 lr_model = LinearRegression()
 lr_model.fit(X_train_scaled, y_train)
-y_pred = lr_model.predict(X_test_scaled)
-mse = mean_squared_error(y_test, y_pred)
-r2 = r2_score(y_test, y_pred)
-predictions = pd.DataFrame({'Actual': y_test, 'Predicted': y_pred})
+y_pred_lr = lr_model.predict(X_test_scaled)
+mse_lr = mean_squared_error(y_test, y_pred_lr)
+r2_lr = r2_score(y_test, y_pred_lr)
+predictions = pd.DataFrame({'Actual': y_test, 'Predicted': y_pred_lr})
 predictions['Difference'] = predictions['Actual'] - predictions['Predicted']
 print(predictions)
-print(f'Mean Squared Error: {mse}')
-print(f'R2 Score: {r2}')
 
 # Random Forest Regressor
 rf_model = RandomForestRegressor(n_estimators=200, random_state=42)
 rf_model.fit(X_train, y_train)
-y_pred = rf_model.predict(X_test)
-mse = mean_squared_error(y_test, y_pred)
-r2 = r2_score(y_test, y_pred)
-predictions = pd.DataFrame({'Actual': y_test, 'Predicted': y_pred})
+y_pred_rf = rf_model.predict(X_test)
+mse_rf = mean_squared_error(y_test, y_pred_rf)
+r2_rf = r2_score(y_test, y_pred_rf)
+predictions = pd.DataFrame({'Actual': y_test, 'Predicted': y_pred_rf})
 predictions['Difference'] = predictions['Actual'] - predictions['Predicted']
 print(predictions)
-print(f'Mean Squared Error: {mse}')
-print(f'R2 Score: {r2}')
+
+# Print results
+print("Linear Regression")
+print(f'Mean Squared Error: {mse_lr}')
+print(f'R2 Score: {r2_lr}\n')
+
+print("Random Forest Regressor")
+print(f'Mean Squared Error: {mse_rf}')
+print(f'R2 Score: {r2_rf}\n')
+
+print("Gradient Boosting Regressor")
+print(f'Mean Squared Error: {mse_gbr}')
+print(f'R2 Score: {r2_gbr}\n')
