@@ -12,6 +12,9 @@ from sklearn.tree import DecisionTreeRegressor
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
 from tensorflow.keras.optimizers import Adam
+from keras.callbacks import EarlyStopping
+from keras.layers import Dropout
+from keras.layers import BatchNormalization
 sns.set_style('whitegrid')
 sns.set_palette('colorblind')
 
@@ -112,11 +115,21 @@ scaler = StandardScaler()
 X_train_scaled = scaler.fit_transform(X_train)
 X_test_scaled = scaler.transform(X_test)
 nn_model = Sequential()
-nn_model.add(Dense(64, input_dim=X_train_scaled.shape[1], activation='relu'))
-nn_model.add(Dense(32, activation='relu'))
+early_stopping = EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
+
+nn_model.add(Dense(1024, input_dim=X_train_scaled.shape[1], activation='relu'))
+nn_model.add(BatchNormalization())
+nn_model.add(Dropout(0.9))
+nn_model.add(Dense(1024, activation='relu'))
+nn_model.add(BatchNormalization())
+nn_model.add(Dropout(0.9))
+nn_model.add(Dense(1024, activation='relu'))
+nn_model.add(BatchNormalization())
+nn_model.add(Dropout(0.9))
 nn_model.add(Dense(1))
+
 nn_model.compile(optimizer=Adam(learning_rate=0.01), loss='mean_squared_error')
-nn_model.fit(X_train_scaled, y_train, epochs=100, batch_size=32, verbose=1)
+nn_model.fit(X_train_scaled, y_train, epochs=100, batch_size=32, verbose=1, validation_split=0.2, callbacks=[early_stopping])
 y_pred_nn = nn_model.predict(X_test_scaled)
 mse_nn = mean_squared_error(y_test, y_pred_nn)
 r2_nn = r2_score(y_test, y_pred_nn)
