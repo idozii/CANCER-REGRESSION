@@ -93,10 +93,10 @@ nn_model.compile(
 history = nn_model.fit(
      X_train_scaled, y_train,
      validation_data=(X_test_scaled, y_test),
-     batch_size=256,
-     epochs=500,
+     batch_size=64,
+     epochs=100,
      callbacks=[early_stopping],
-     verbose=0,
+     verbose=1,
 )
 history_df = pd.DataFrame(history.history)
 history_df[['loss', 'val_loss']].plot()
