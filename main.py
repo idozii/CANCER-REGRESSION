@@ -92,7 +92,7 @@ nn_model.compile(
 history = nn_model.fit(
      X_train_top_scaled, y_train,
      validation_data=(X_test_top_scaled, y_test),
-     batch_size=32,
+     batch_size=64,
      epochs=200,
      callbacks=[early_stopping],
      verbose=1,
