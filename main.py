@@ -114,6 +114,12 @@ print(f'Mean Absolute Error: {mae_nn}')
 print(f'Mean Squared Error: {mse_nn}')
 print(f'R2 Score: {r2_nn}')
 
-test_sample = X_test_top_scaled[1:2]
-prediction = nn_model.predict(test_sample)
-print(f"The predicted value is {prediction[0][0]:.2f}. The actual value is {y_test.iloc[1]:.2f}")
+error_df = pd.DataFrame({
+    'Actual': y_test,
+    'Predicted': y_pred_nn.flatten(),
+    'Error': abs(y_test - y_pred_nn.flatten())
+})
+print("Best Predictions")
+print(error_df.sort_values('Error').head(5))
+print("Worst Predictions")
+print(error_df.sort_values('Error', ascending=False).head(5))
