@@ -14,9 +14,6 @@ from sklearn.ensemble import RandomForestRegressor
 import time
 import os
 
-# Enable CUDA launch blocking for better error messages
-os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
-
 # Set CUDA worker initialization flag to avoid errors
 try:
     torch.multiprocessing.set_start_method('spawn', force=True)
@@ -37,24 +34,12 @@ if torch.cuda.is_available():
     def print_gpu_utilization():
         print(f"GPU Memory Allocated: {torch.cuda.memory_allocated() / 1e9:.2f} GB")
         print(f"GPU Memory Reserved: {torch.cuda.memory_reserved() / 1e9:.2f} GB")
-        # Get current GPU utilization if running on Linux
-        try:
-            import subprocess
-            gpu_util = subprocess.check_output(["nvidia-smi", "--query-gpu=utilization.gpu", "--format=csv,noheader,nounits"])
-            print(f"GPU Utilization: {gpu_util.decode('utf-8').strip()}%")
-        except:
-            pass
     
     # Initial GPU stats
     print_gpu_utilization()
     
     # Ensure CUDA operations are synchronized
     torch.cuda.synchronize()
-
-# Enable cuDNN benchmarking for faster convolutions
-torch.backends.cudnn.benchmark = True
-# Use deterministic algorithms for reproducibility (can be slower)
-# torch.backends.cudnn.deterministic = True
 
 sns.set_style('whitegrid')
 sns.set_palette('colorblind')
@@ -102,67 +87,40 @@ X_test_top = X_test[top_features]
 X_train_top_scaled = scaler.fit_transform(X_train_top)
 X_test_top_scaled = scaler.transform(X_test_top)
 
-# Cache data to reduce CPU overhead
-X_train_top_scaled = np.ascontiguousarray(X_train_top_scaled)
-X_test_top_scaled = np.ascontiguousarray(X_test_top_scaled)
-y_train_values = np.ascontiguousarray(y_train.values)
-y_test_values = np.ascontiguousarray(y_test.values)
-
-# Convert data to PyTorch tensors - keep on CPU initially
+# Better approach: Keep tensors on CPU initially, then move to GPU in batches
 X_train_tensor = torch.tensor(X_train_top_scaled, dtype=torch.float32)
 X_test_tensor = torch.tensor(X_test_top_scaled, dtype=torch.float32)
-y_train_tensor = torch.tensor(y_train_values, dtype=torch.float32).unsqueeze(1)
-y_test_tensor = torch.tensor(y_test_values, dtype=torch.float32).unsqueeze(1)
+y_train_tensor = torch.tensor(y_train.values, dtype=torch.float32).unsqueeze(1)
+y_test_tensor = torch.tensor(y_test.values, dtype=torch.float32).unsqueeze(1)
 
-# Try larger batch sizes for better GPU utilization
-batch_size = 512  # Increased from 256 to better utilize GPU
-
-# Create datasets and data loaders
+# Create DataLoader for batching - with proper pin_memory settings
+batch_size = 64
 train_dataset = TensorDataset(X_train_tensor, y_train_tensor)
 test_dataset = TensorDataset(X_test_tensor, y_test_tensor)
+train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, pin_memory=True, num_workers=0)
+test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False, pin_memory=True, num_workers=0)
 
-# Update your DataLoader definitions to disable multiprocessing
-train_loader = DataLoader(
-    train_dataset, 
-    batch_size=batch_size, 
-    shuffle=True, 
-    pin_memory=True, 
-    num_workers=0  # Change this to 0
-)
-
-test_loader = DataLoader(
-    test_dataset, 
-    batch_size=batch_size, 
-    shuffle=False, 
-    pin_memory=True, 
-    num_workers=0  # Change this to 0
-)
-
+# Verify data will move to GPU in training loop
 print(f"Input tensor device: {X_train_tensor.device}")
 print(f"Target tensor device: {y_train_tensor.device}")
 
-#* Define a larger Neural Network Model to better utilize GPU
+#* Define Neural Network Model
 class NeuralNetwork(nn.Module):
     def __init__(self, input_size):
         super(NeuralNetwork, self).__init__()
-        # Increase network size to better utilize GPU
-        self.fc1 = nn.Linear(input_size, 256)
-        self.bn1 = nn.BatchNorm1d(256)
-        self.dropout1 = nn.Dropout(0.3)
+        self.fc1 = nn.Linear(input_size, 128)
+        self.bn1 = nn.BatchNorm1d(128)
+        self.dropout1 = nn.Dropout(0.2)
         
-        self.fc2 = nn.Linear(256, 128)
-        self.bn2 = nn.BatchNorm1d(128)
-        self.dropout2 = nn.Dropout(0.3)
+        self.fc2 = nn.Linear(128, 64)
+        self.bn2 = nn.BatchNorm1d(64)
+        self.dropout2 = nn.Dropout(0.2)
         
-        self.fc3 = nn.Linear(128, 64)
-        self.bn3 = nn.BatchNorm1d(64)
-        self.dropout3 = nn.Dropout(0.3)
+        self.fc3 = nn.Linear(64, 32)
+        self.bn3 = nn.BatchNorm1d(32)
+        self.dropout3 = nn.Dropout(0.2)
         
-        self.fc4 = nn.Linear(64, 32)
-        self.bn4 = nn.BatchNorm1d(32)
-        self.dropout4 = nn.Dropout(0.2)
-        
-        self.fc5 = nn.Linear(32, 1)
+        self.fc4 = nn.Linear(32, 1)
 
     def forward(self, x):
         x = torch.relu(self.fc1(x))
@@ -177,33 +135,18 @@ class NeuralNetwork(nn.Module):
         x = self.bn3(x)
         x = self.dropout3(x)
         
-        x = torch.relu(self.fc4(x))
-        x = self.bn4(x)
-        x = self.dropout4(x)
-        
-        x = self.fc5(x)
+        x = self.fc4(x)
         return x
 
 # Initialize model, loss function, and optimizer
 input_size = X_train_top_scaled.shape[1]
 model = NeuralNetwork(input_size).to(device)
 criterion = nn.MSELoss()
-optimizer = optim.Adam(model.parameters(), lr=0.001, eps=1e-7)
-
-# Setup mixed precision training for better performance
-scaler = torch.cuda.amp.GradScaler() if torch.cuda.is_available() else None
+optimizer = optim.Adam(model.parameters(), lr=0.001)
 
 # Check that model is on GPU
 if torch.cuda.is_available():
     print(f"Model is on GPU: {next(model.parameters()).is_cuda}")
-    print_gpu_utilization()
-    
-    # Warm-up the GPU with a dummy forward pass
-    dummy_input = torch.randn(batch_size, input_size, device=device)
-    with torch.no_grad():
-        dummy_output = model(dummy_input)
-    torch.cuda.synchronize()
-    print("GPU warm-up complete")
     print_gpu_utilization()
 
 #* Training the Model
@@ -216,58 +159,36 @@ train_losses, val_losses = [], []
 start_time = time.time()
 
 for epoch in range(num_epochs):
-    # Training phase
     model.train()
     train_loss = 0
     for batch_X, batch_y in train_loader:
         # Move tensors to GPU for this batch
-        batch_X, batch_y = batch_X.to(device, non_blocking=True), batch_y.to(device, non_blocking=True)
+        batch_X, batch_y = batch_X.to(device), batch_y.to(device)
         
-        # Clear gradients
-        optimizer.zero_grad(set_to_none=True)  # More efficient than zero_grad()
-        
-        if scaler is not None:  # Use mixed precision if available
-            with torch.cuda.amp.autocast():
-                y_pred = model(batch_X)
-                loss = criterion(y_pred, batch_y)
-            
-            # Scale gradients and optimize
-            scaler.scale(loss).backward()
-            scaler.step(optimizer)
-            scaler.update()
-        else:
-            # Standard precision training
-            y_pred = model(batch_X)
-            loss = criterion(y_pred, batch_y)
-            loss.backward()
-            optimizer.step()
-            
+        optimizer.zero_grad()
+        y_pred = model(batch_X)
+        loss = criterion(y_pred, batch_y)
+        loss.backward()
+        optimizer.step()
         train_loss += loss.item()
     
     train_loss /= len(train_loader)
     train_losses.append(train_loss)
 
-    # Validation phase
+    # Validation
     model.eval()
     val_loss = 0
     with torch.no_grad():
         for batch_X, batch_y in test_loader:
-            batch_X, batch_y = batch_X.to(device, non_blocking=True), batch_y.to(device, non_blocking=True)
-            
-            if scaler is not None:  # Use mixed precision if available
-                with torch.cuda.amp.autocast():
-                    y_pred = model(batch_X)
-                    loss = criterion(y_pred, batch_y)
-            else:
-                y_pred = model(batch_X)
-                loss = criterion(y_pred, batch_y)
-                
+            batch_X, batch_y = batch_X.to(device), batch_y.to(device)
+            y_pred = model(batch_X)
+            loss = criterion(y_pred, batch_y)
             val_loss += loss.item()
     
     val_loss /= len(test_loader)
     val_losses.append(val_loss)
 
-    # Print progress and GPU stats periodically
+    # Print progress every 10 epochs or at the first epoch
     if epoch % 10 == 0 or epoch == 0:
         print(f"Epoch {epoch+1}/{num_epochs}, Train Loss: {train_loss:.4f}, Val Loss: {val_loss:.4f}")
         if torch.cuda.is_available():
@@ -297,14 +218,8 @@ y_pred_list = []
 y_actual_list = []
 with torch.no_grad():
     for batch_X, batch_y in test_loader:
-        batch_X, batch_y = batch_X.to(device, non_blocking=True), batch_y.to(device, non_blocking=True)
-        
-        if scaler is not None:  # Use mixed precision if available
-            with torch.cuda.amp.autocast():
-                y_pred = model(batch_X)
-        else:
-            y_pred = model(batch_X)
-            
+        batch_X, batch_y = batch_X.to(device), batch_y.to(device)
+        y_pred = model(batch_X)
         y_pred_list.append(y_pred.cpu().numpy())
         y_actual_list.append(batch_y.cpu().numpy())
 
