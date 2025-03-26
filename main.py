@@ -387,6 +387,16 @@ for bar in bars:
     height = bar.get_height()
     plt.text(bar.get_x() + bar.get_width()/2., height + 5,
             f'{height:.2f}', ha='center', va='bottom')
+    
+plt.subplot(1, 3, 2)
+bars = plt.bar(models_df['Model'], models_df['RMSE'])
+plt.xticks(rotation=45, ha='right')
+plt.title('Root Mean Squared Error by Model (Lower is Better)')
+plt.ylabel('RMSE')
+for bar in bars:
+    height = bar.get_height()
+    plt.text(bar.get_x() + bar.get_width()/2., height + 0.5,
+            f'{height:.2f}', ha='center', va='bottom')
 
 plt.subplot(1, 3, 3)
 bars = plt.bar(models_df['Model'], models_df['Mean Absolute Error'])
