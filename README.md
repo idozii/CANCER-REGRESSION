@@ -107,9 +107,11 @@ Both datasets were examined for data quality issues:
 The cleaning process included:
 
 - Handling missing values using median imputation
+- Handling missing values for categorical columns
 - Checking and removing duplicate entries
 - Merging datasets on the common `geography` column
 - Feature engineering to create interaction terms between top predictors
+- Additionally, outlier removal was performed to improve model quality
 
 After merging, the final dataset contained 591 complete records with 36 features.
 
@@ -121,13 +123,13 @@ The distribution and relationships in the data were visualized:
 
 ![Histogram of target_deathrate](/figure/Figure_1.png)
 
-- The target death rate shows a roughly normal distribution
+- The target death rate shows a roughly normal distribution with values primarily between 150-200 deaths per 100,000 population
 
 ### Statistical Distribution Analysis
 
 ![Boxplot of target_deathrate](/figure/Figure_2.png)
 
-- Boxplot analysis revealed moderate outliers in the death rate data
+- Boxplot analysis revealed moderate outliers in the death rate data, which were addressed in data preprocessing
 
 ### Income Level Relationship
 
