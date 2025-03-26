@@ -1,7 +1,24 @@
+# CANCER REGRESSION ANALYSIS PROJECT
 
-# CANCER REGRESSION ASSIGNMENT
+## Overview
 
-This dataset contains information about cancer cases, deaths, and related demographic data for various regions.
+This project analyzes and predicts cancer mortality rates across various regions using machine learning models. The analysis leverages demographic, socioeconomic, and health-related data to identify key predictors of cancer death rates.
+
+## Dataset Description
+
+The analysis uses two primary datasets:
+
+### 1. Cancer Regression Data (cancer_reg.csv): Contains comprehensive information about:
+
+- Cancer statistics (incidence rate, deaths per year)
+- Economic indicators (median income, poverty percentages)
+- Demographic information (age distribution, education levels)
+- Healthcare coverage metrics (public and private insurance)
+- Population characteristics (race, marital status)
+
+### 2. Average Household Size Data (avg-household-size.csv): Contains regional household size statistics
+
+The primary target variable is target_deathrate, representing the death rate due to cancer in each region.
 
 | Column                   | Description                                                   |
 |--------------------------|---------------------------------------------------------------|
@@ -26,19 +43,17 @@ This dataset contains information about cancer cases, deaths, and related demogr
 | pctmarriedhouseholds     | Percentage of married households                              |
 | birthrate                | Birth rate in the region                                      |
 
-## FIRST CHECK AFTER CLEANING
+## Data Preparation and Cleaning
 
-This part illustrates filtered datasets after processing through dropna(), dropduplicates() and ffill().
+### Initial Data Assessment
 
-### *avghouseholdsize_data*
+Both datasets were examined for data quality issues:
 
-| statefips | countyfips | avghouseholdsize | geography                             |
-|-----------|------------|------------------|---------------------------------------|
-| 2         | 13         | 2.43             | Aleutians East Borough, Alaska        |
-| 2         | 16         | 3.59             | Aleutians West Census Area, Alaska    |
-| 2         | 20         | 2.77             | Anchorage Municipality, Alaska        |
-| 2         | 50         | 3.86             | Bethel Census Area, Alaska            |
-| 2         | 60         | 2.50             | Bristol Bay Borough, Alaska           |
+- **Household Size Data**: 3,220 records with complete data for statefips, countyfips, avghouseholdsize, and geography
+- **Cancer Regression Data**: 3,047 records with most variables complete, though some columns had missing values:
+  - `pctsomecol18_24`: 762 non-null values
+  - `pctemployed16_over`: 2,895 non-null values
+  - `pctprivatecoveragealone`: 2,438 non-null values
 
 ### Non-null checking (avghouseholdsize_data)
 
@@ -48,26 +63,6 @@ This part illustrates filtered datasets after processing through dropna(), dropd
 | countyfips        | 3220 non-null  | int64   |
 | avghouseholdsize  | 3220 non-null  | float64 |
 | geography         | 3220 non-null  | object  |
-
-### Missing values and duplicate checking (avghouseholdsize_data)
-
-| Column            | Missing Values |
-|-------------------|----------------|
-| statefips         | 0              |
-| countyfips        | 0              |
-| avghouseholdsize  | 0              |
-| geography         | 0              |
-| dtype             | int64          |
-
-### *cancereg_data*
-
-| avganncount | avgdeathsperyear | target_deathrate | incidencerate | medincome | popest2015 | pctwhite  | pctblack | pctasian | pctotherrace | pctmarriedhouseholds | birthrate |
-|-------------|------------------|------------------|---------------|-----------|------------|-----------|----------|----------|--------------|----------------------|-----------|
-| 1397.0      | 469              | 164.9            | 489.8         | 61898     | 260131     | 81.780529 | 2.594728 | 4.821857 | 1.843479     | 52.856076             | 6.118831  |
-| 173.0       | 70               | 161.3            | 411.6         | 48127     | 43269      | 89.228509 | 0.969102 | 2.246233 | 3.741352     | 45.372500             | 4.333096  |
-| 102.0       | 50               | 174.7            | 349.7         | 49348     | 21026      | 90.922190 | 0.739673 | 0.465898 | 2.747358     | 54.444868             | 3.729488  |
-| 427.0       | 202              | 194.8            | 430.4         | 44243     | 75882      | 91.744686 | 0.782626 | 1.161359 | 1.362643     | 51.021514             | 4.603841  |
-| 57.0        | 26               | 144.4            | 350.1         | 49955     | 10321      | 94.104024 | 0.270192 | 0.665830 | 0.492135     | 54.027460             | 6.796657  |
 
 ### Non-null checking (cancereg_data)
 
@@ -107,211 +102,51 @@ This part illustrates filtered datasets after processing through dropna(), dropd
 | pctmarriedhouseholds     | 3047 non-null  | float64 |
 | birthrate                | 3047 non-null  | float64 |
 
-### Missing values and duplicate checking (cancereg_data)
+### Data Cleaning Process
 
-| Column                   | Missing Values |
-|--------------------------|----------------|
-| avganncount              | 0              |
-| avgdeathsperyear         | 0              |
-| target_deathrate         | 0              |
-| incidencerate            | 0              |
-| medincome                | 0              |
-| popest2015               | 0              |
-| povertypercent           | 0              |
-| studypercap              | 0              |
-| binnedinc                | 0              |
-| medianage                | 0              |
-| medianagemale            | 0              |
-| medianagefemale          | 0              |
-| geography                | 0              |
-| percentmarried           | 0              |
-| pctnohs18_24             | 0              |
-| pcths18_24               | 0              |
-| pctsomecol18_24          | 0              |
-| pctbachdeg18_24          | 0              |
-| pcths25_over             | 0              |
-| pctbachdeg25_over        | 0              |
-| pctemployed16_over       | 0              |
-| pctunemployed16_over     | 0              |
-| pctprivatecoverage       | 0              |
-| pctprivatecoveragealone  | 0              |
-| pctempprivcoverage       | 0              |
-| pctpubliccoverage        | 0              |
-| pctpubliccoveragealone   | 0              |
-| pctwhite                 | 0              |
-| pctblack                 | 0              |
-| pctasian                 | 0              |
-| pctotherrace             | 0              |
-| pctmarriedhouseholds     | 0              |
-| birthrate                | 0              |
+The cleaning process included:
 
-### Evaluation (CLEANING_PART)
+- Handling missing values using median imputation
+- Checking and removing duplicate entries
+- Merging datasets on the common `geography` column
+- Feature engineering to create interaction terms between top predictors
 
-2 datasets have 1 common column: geography.
+After merging, the final dataset contained 591 complete records with 36 features.
 
-2 datasets don't need to clean anymore because they don't have any missing values and duplicates.
+## Exploratory Data Analysis
 
-Approved to merge for plotting and predicting.
+The distribution and relationships in the data were visualized:
 
-## MERGING DATA BASED ON GEOGRAPHY
-
-This part provides information about merging data and how I clean these datasets within duplicates, missing values cases.
-
-### *merged_data*
-
-| statefips | countyfips | avghouseholdsize | geography                          | avganncount | pctblack | pctasian | pctotherrace | pctmarriedhouseholds | birthrate |
-|-----------|-------------|------------------|------------------------------------|-------------|----------|----------|--------------|----------------------|-----------|
-| 2         | 100         | 2.12             | Haines Borough, Alaska             | 13.0        | 0.039062 | 3.007812 | 0.507812     | 47.789116             | 5.374280  |
-| 2         | 122         | 2.57             | Kenai Peninsula Borough, Alaska    | 266.0       | 0.634382 | 1.279251 | 0.559235     | 51.021643             | 5.680094  |
-| 2         | 130         | 2.55             | Ketchikan Gateway Borough, Alaska  | 63.0        | 0.423389 | 7.307103 | 0.656982     | 46.667932             | 4.936668  |
-| 2         | 290         | 2.81             | Yukon-Koyukuk Census Area, Alaska  | 27.0        | 0.301205 | 0.460666 | 0.212615     | 36.377397             | 6.744604  |
-| 1         | 19          | 2.28             | Cherokee County, Alabama           | 158.0       | 4.925408 | 0.338357 | 0.065365     | 57.173258             | 4.687790  |
-
-### Non-null checking
-
-| Column                   | Non-Null Count | Dtype   |
-|--------------------------|----------------|---------|
-| statefips                | 591            | int64   |
-| countyfips               | 591            | int64   |
-| avghouseholdsize         | 591            | float64 |
-| geography                | 591            | object  |
-| avganncount              | 591            | float64 |
-| avgdeathsperyear         | 591            | int64   |
-| target_deathrate         | 591            | float64 |
-| incidencerate            | 591            | float64 |
-| medincome                | 591            | int64   |
-| popest2015               | 591            | int64   |
-| povertypercent           | 591            | float64 |
-| studypercap              | 591            | float64 |
-| binnedinc                | 591            | object  |
-| medianage                | 591            | float64 |
-| medianagemale            | 591            | float64 |
-| medianagefemale          | 591            | float64 |
-| percentmarried           | 591            | float64 |
-| pctnohs18_24             | 591            | float64 |
-| pcths18_24               | 591            | float64 |
-| pctsomecol18_24          | 591            | float64 |
-| pctbachdeg18_24          | 591            | float64 |
-| pcths25_over             | 591            | float64 |
-| pctbachdeg25_over        | 591            | float64 |
-| pctemployed16_over       | 591            | float64 |
-| pctunemployed16_over     | 591            | float64 |
-| pctprivatecoverage       | 591            | float64 |
-| pctprivatecoveragealone  | 591            | float64 |
-| pctempprivcoverage       | 591            | float64 |
-| pctpubliccoverage        | 591            | float64 |
-| pctpubliccoveragealone   | 591            | float64 |
-| pctwhite                 | 591            | float64 |
-| pctblack                 | 591            | float64 |
-| pctasian                 | 591            | float64 |
-| pctotherrace             | 591            | float64 |
-| pctmarriedhouseholds     | 591            | float64 |
-| birthrate                | 591            | float64 |
-
-### Missing values and duplicate checking
-
-| Column                   | Missing Values |
-|--------------------------|----------------|
-| statefips                | 0              |
-| countyfips               | 0              |
-| avghouseholdsize         | 0              |
-| geography                | 0              |
-| avganncount              | 0              |
-| avgdeathsperyear         | 0              |
-| target_deathrate         | 0              |
-| incidencerate            | 0              |
-| medincome                | 0              |
-| popest2015               | 0              |
-| povertypercent           | 0              |
-| studypercap              | 0              |
-| binnedinc                | 0              |
-| medianage                | 0              |
-| medianagemale            | 0              |
-| medianagefemale          | 0              |
-| percentmarried           | 0              |
-| pctnohs18_24             | 0              |
-| pcths18_24               | 0              |
-| pctsomecol18_24          | 0              |
-| pctbachdeg18_24          | 0              |
-| pcths25_over             | 0              |
-| pctbachdeg25_over        | 0              |
-| pctemployed16_over       | 0              |
-| pctunemployed16_over     | 0              |
-| pctprivatecoverage       | 0              |
-| pctprivatecoveragealone  | 0              |
-| pctempprivcoverage       | 0              |
-| pctpubliccoverage        | 0              |
-| pctpubliccoveragealone   | 0              |
-| pctwhite                 | 0              |
-| pctblack                 | 0              |
-| pctasian                 | 0              |
-| pctotherrace             | 0              |
-| pctmarriedhouseholds     | 0              |
-| birthrate                | 0              |
-
-### Evaluation (MERGING_PART)
-
-Noted that target death rate is the most important feature to predict.
-
-Plot for further validation.
-
-## PLOTTING
-
-This part describes the visualization of the data.
-
-### Graph 1: Histogram of target_deathrate
+### Target Variable Analysis
 
 ![Histogram of target_deathrate](/figure/Figure_1.png)
 
-### Graph 2: Boxplot of target_deathrate
+- The target death rate shows a roughly normal distribution
+
+### Statistical Distribution Analysis
 
 ![Boxplot of target_deathrate](/figure/Figure_2.png)
 
-### Graph 3: Boxplot of target_deathrate with bennedInc
+- Boxplot analysis revealed moderate outliers in the death rate data
 
-![Boxplot of target_deathrate with bennedInc](/figure/Figure_3.png)
+### Income Level Relationship
 
-### Graph 4: Pairplot of target_deathrate with other important features
+![Boxplot by Income Brackets](/figure/Figure_3.png)
 
-![Pairplot of target_deathrate with other important features](/figure/Figure_4.png)
+- Clear relationship between income brackets and cancer death rates
+- Lower income areas generally show higher cancer death rates
 
-### Evaluation (PLOTTING_PART)
+### Feature Relationships
 
-Based on the plots, we can see that the target death rate is normally distributed and has a strong correlation with other features.
+![Feature Pairplot](/figure/Figure_4.png)
 
-## Gradient Boosting Regressor with Grid Search
+- Strong negative correlation between education level and death rate
+- Positive correlation between cancer incidence rate and death rate
+- Significant relationship between health insurance coverage and death rate
 
-This project demonstrates the use of Gradient Boosting Regressor with Grid Search for hyperparameter tuning to predict the target death rate.
+## Feature Selection
 
-1. **Define the parameter grid**: Specify the range of hyperparameters to search over, including the number of estimators, learning rate, and maximum depth of the trees.
-
-2. **Initialize the model**: Create an instance of the Gradient Boosting Regressor with a fixed random state for reproducibility.
-
-3. **Perform Grid Search**: Use GridSearchCV to perform an exhaustive search over the specified parameter grid with cross-validation to find the best hyperparameters.
-
-4. **Get the best parameters and train the model**: Retrieve the best parameters from the grid search and train the Gradient Boosting Regressor using these optimal hyperparameters.
-
-5. **Evaluate the model**: Predict the target values for the test set and evaluate the model's performance using Mean Squared Error (MSE) and R2 Score.
-
-### Best Parameters
-
-The best parameters found by Grid Search are as follows:
-
-```python
-{'learning_rate': 0.1, 'max_depth': 3, 'n_estimators': 50}
-```
-
-## CHOOSING FEATURES FOR PREDICTING
-
-This section demonstrates how to select the most important features for predicting the target death rate using a Random Forest Regressor.
-
-1. **Prepare the Data**: Drop unnecessary columns and split the data into training and testing sets.
-2. **Train the Model**: Use `RandomForestRegressor` to train the model on the training data.
-3. **Evaluate the Model**: Predict the target values for the test set and calculate the Mean Squared Error (MSE) and R2 score.
-4. **Feature Importance**: Extract and display the importance of each feature.
-5. **Plot Feature Importance**: Visualize the feature importance using a bar plot.
-
-### Feature Importance of Random Forest Regressor
+A Random Forest Regressor was used to identify the most important predictors:
 
 | Rank | Feature                   | Importance |
 |------|---------------------------|------------|
@@ -325,58 +160,54 @@ This section demonstrates how to select the most important features for predicti
 | 8    | avghouseholdsize          | 0.027914   |
 | 9    | povertypercent            | 0.026800   |
 | 10   | pctblack                  | 0.024291   |
-| 11   | pctunemployed16_over      | 0.020893   |
-| 12   | pctotherrace              | 0.020618   |
-| 13   | pcths18_24                | 0.019416   |
-| 14   | popest2015                | 0.018593   |
-| 15   | countyfips                | 0.017569   |
-| 16   | birthrate                 | 0.017296   |
-| 17   | pctwhite                  | 0.016858   |
-| 18   | pctemployed16_over        | 0.016714   |
-| 19   | pctasian                  | 0.016076   |
-| 20   | pctmarriedhouseholds      | 0.015888   |
-| 21   | avganncount               | 0.014417   |
-| 22   | medianagefemale           | 0.014215   |
-| 23   | pctnohs18_24              | 0.013672   |
-| 24   | pctbachdeg18_24           | 0.013510   |
-| 25   | percentmarried            | 0.013420   |
-| 26   | pctpubliccoverage         | 0.011086   |
-| 27   | pctempprivcoverage        | 0.010603   |
-| 28   | medianagemale             | 0.009289   |
-| 29   | statefips                 | 0.009099   |
-| 30   | pctprivatecoveragealone   | 0.008674   |
-| 31   | medianage                 | 0.008475   |
-| 32   | pctsomecol18_24           | 0.004791   |
-| 33   | studypercap               | 0.004365   |
 
-### Evaluation (FEATURE_SELECTION_PART)
+![Feature Importance](/figure/Figure_5.png)
 
-The Random Forest Regressor model shows that the most important features for predicting the target death rate are `pctbachdeg25_over`, `incidencerate`, `medincome`, `pcths25_over`, and `avgdeathsperyear`.
+The feature importance analysis reveals:
 
-![Plot of these features](/figure/Figure_5.png)
+- Education level (`pctbachdeg25_over`) is the strongest predictor
+- Cancer incidence rate is the second most important factor
+- Economic factors (`medincome`) play a significant role
+- High school education levels (`pcths25_over`) are also influential
 
-#### Feature Importance of Gradient Boosting Regressor (after choosing the best features)
+## Model Development and Optimization
 
-![Plot of these relative features](/figure/Figure_6.png)
+### Gradient Boosting Model Optimization
 
-## PREDICTING
+Grid Search was used to find optimal hyperparameters:
 
-This part will predict the target death rate based on the features.
+```python
+{'learning_rate': 0.1, 'max_depth': 3, 'n_estimators': 50}
 
-![Plot of these models](/figure/Figure_7.png)
+![Gradient Boosting Feature Importance](/figure/Figure_6.png)
 
-### Evaluation (PREDICTING_PART)
+### Neural Network Implementation
 
-| Model                    | Mean Squared Error | R2 Score | Predicted Value | Actual Value |
-|--------------------------|--------------------|----------|-----------------|--------------|
-| Gradient Boosting        | 371.288            | 0.501    | 196.54          | 171.4        |
-| Linear Regression        | 383.954            | 0.484    | 199.49          | 171.4        |
-| Random Forest Regressor  | 382.370            | 0.486    | 201.31          | 171.4        |
-| Decision Tree Regressor  | 440.264            | 0.408    | 174.58          | 171.4        |
-| Neural Network Regressor | 419.203            | 0.436    | 207.54          | 171.4        |
+A custom deep neural network was implemented with:
+- Multiple dense layers with batch normalization
+- Dropout layers for regularization
+- Early stopping to prevent overfitting
+- Learning rate scheduling
 
-The Gradient Boosting Regressor model has the lowest Mean Squared Error and the highest R2 Score among the models tested.
+```python
+class ImprovedNN(nn.Module):
+    def __init__(self, input_size):
+        super(ImprovedNN, self).__init__()
+        self.fc1 = nn.Linear(input_size, 256)
+        self.bn1 = nn.BatchNorm1d(256)
+        self.dropout1 = nn.Dropout(0.3)
+        
+        self.fc2 = nn.Linear(256, 128)
+        self.bn2 = nn.BatchNorm1d(128)
+        self.dropout2 = nn.Dropout(0.3)
+        
+        self.fc3 = nn.Linear(128, 64)
+        self.bn3 = nn.BatchNorm1d(64)
+        self.dropout3 = nn.Dropout(0.25)
+        
+        self.fc4 = nn.Linear(64, 32)
+        self.bn4 = nn.BatchNorm1d(32)
+        self.dropout4 = nn.Dropout(0.2)
+        
+        self.fc5 = nn.Linear(32, 1)
 
-## CONCLUSION
-
-This project demonstrates the use of Gradient Boosting Regressor with Grid Search for hyperparameter tuning and Random Forest Regressor for feature selection to predict the target death rate based on various demographic and health-related features.
