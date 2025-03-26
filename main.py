@@ -14,41 +14,33 @@ from sklearn.ensemble import RandomForestRegressor
 import time
 import os
 
-# Set CUDA worker initialization flag to avoid errors
 try:
     torch.multiprocessing.set_start_method('spawn', force=True)
 except RuntimeError:
-    pass  # Already set
+    pass
 
-# Check if GPU is available
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(f"Using device: {device}")
 
-# Add GPU monitoring capabilities
 if torch.cuda.is_available():
     print(f"GPU Name: {torch.cuda.get_device_name(0)}")
     print(f"GPU Memory Total: {torch.cuda.get_device_properties(0).total_memory / 1e9:.2f} GB")
     print(f"CUDA Version: {torch.version.cuda}")
     
-    # Function to monitor GPU usage during training
     def print_gpu_utilization():
         print(f"GPU Memory Allocated: {torch.cuda.memory_allocated() / 1e9:.2f} GB")
         print(f"GPU Memory Reserved: {torch.cuda.memory_reserved() / 1e9:.2f} GB")
     
-    # Initial GPU stats
     print_gpu_utilization()
     
-    # Ensure CUDA operations are synchronized
     torch.cuda.synchronize()
 
 sns.set_style('whitegrid')
 sns.set_palette('colorblind')
 
-#* Load the data
 avghouseholdsize_data = pd.read_csv('data/avg-household-size.csv')
 cancereg_data = pd.read_csv('data/cancer_reg.csv')
 
-#! Filter and clean the data
 numeric_cols = cancereg_data.select_dtypes(include=['float64', 'int64']).columns.tolist()
 if numeric_cols:
     numeric_imputer = SimpleImputer(strategy='median')
@@ -59,13 +51,11 @@ if object_cols:
     cat_imputer = SimpleImputer(strategy='most_frequent')
     cancereg_data[object_cols] = cat_imputer.fit_transform(cancereg_data[object_cols])
 
-#* Merge the data
 merged_data = pd.merge(avghouseholdsize_data, cancereg_data, on='geography', how='inner')
 all_features = numeric_cols + object_cols
 if 'target_deathrate' in all_features:
     all_features.remove('target_deathrate')
 
-#! Prepare the data for modeling using Random Forest
 X = merged_data[all_features]
 if object_cols:
     X = pd.get_dummies(X, columns=object_cols, drop_first=True)
@@ -80,31 +70,26 @@ feature_importance = pd.DataFrame({
 }).sort_values('Importance', ascending=False)
 top_features = feature_importance.head(20)['Feature']
 
-# Scale the data
 scaler = StandardScaler()
 X_train_top = X_train[top_features]
 X_test_top = X_test[top_features]
 X_train_top_scaled = scaler.fit_transform(X_train_top)
 X_test_top_scaled = scaler.transform(X_test_top)
 
-# Better approach: Keep tensors on CPU initially, then move to GPU in batches
 X_train_tensor = torch.tensor(X_train_top_scaled, dtype=torch.float32)
 X_test_tensor = torch.tensor(X_test_top_scaled, dtype=torch.float32)
 y_train_tensor = torch.tensor(y_train.values, dtype=torch.float32).unsqueeze(1)
 y_test_tensor = torch.tensor(y_test.values, dtype=torch.float32).unsqueeze(1)
 
-# Create DataLoader for batching - with proper pin_memory settings
 batch_size = 64
 train_dataset = TensorDataset(X_train_tensor, y_train_tensor)
 test_dataset = TensorDataset(X_test_tensor, y_test_tensor)
 train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, pin_memory=True, num_workers=0)
 test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False, pin_memory=True, num_workers=0)
 
-# Verify data will move to GPU in training loop
 print(f"Input tensor device: {X_train_tensor.device}")
 print(f"Target tensor device: {y_train_tensor.device}")
 
-#* Define Neural Network Model
 class NeuralNetwork(nn.Module):
     def __init__(self, input_size):
         super(NeuralNetwork, self).__init__()
@@ -138,18 +123,15 @@ class NeuralNetwork(nn.Module):
         x = self.fc4(x)
         return x
 
-# Initialize model, loss function, and optimizer
 input_size = X_train_top_scaled.shape[1]
 model = NeuralNetwork(input_size).to(device)
 criterion = nn.MSELoss()
 optimizer = optim.Adam(model.parameters(), lr=0.001)
 
-# Check that model is on GPU
 if torch.cuda.is_available():
     print(f"Model is on GPU: {next(model.parameters()).is_cuda}")
     print_gpu_utilization()
 
-#* Training the Model
 num_epochs = 1000
 early_stop_patience = 20
 best_loss = float('inf')
@@ -162,7 +144,6 @@ for epoch in range(num_epochs):
     model.train()
     train_loss = 0
     for batch_X, batch_y in train_loader:
-        # Move tensors to GPU for this batch
         batch_X, batch_y = batch_X.to(device), batch_y.to(device)
         
         optimizer.zero_grad()
@@ -175,7 +156,6 @@ for epoch in range(num_epochs):
     train_loss /= len(train_loader)
     train_losses.append(train_loss)
 
-    # Validation
     model.eval()
     val_loss = 0
     with torch.no_grad():
@@ -188,13 +168,11 @@ for epoch in range(num_epochs):
     val_loss /= len(test_loader)
     val_losses.append(val_loss)
 
-    # Print progress every 10 epochs or at the first epoch
     if epoch % 10 == 0 or epoch == 0:
         print(f"Epoch {epoch+1}/{num_epochs}, Train Loss: {train_loss:.4f}, Val Loss: {val_loss:.4f}")
         if torch.cuda.is_available():
             print_gpu_utilization()
     
-    # Early stopping
     if val_loss < best_loss:
         best_loss = val_loss
         early_stop_counter = 0
@@ -205,14 +183,11 @@ for epoch in range(num_epochs):
             print("Early stopping triggered")
             break
 
-# Print total training time
 end_time = time.time()
 print(f"Total training time: {end_time - start_time:.2f} seconds")
 
-# Load best model
 model.load_state_dict(best_model_state)
 
-#* Evaluate Model
 model.eval()
 y_pred_list = []
 y_actual_list = []
@@ -235,7 +210,6 @@ print(f'Mean Absolute Error: {mae_pytorch}')
 print(f'Mean Squared Error: {mse_pytorch}')
 print(f'R2 Score: {r2_pytorch}')
 
-#* Plot Training History
 plt.figure(figsize=(10, 6))
 plt.plot(train_losses, label='Training Loss')
 plt.plot(val_losses, label='Validation Loss')
@@ -243,9 +217,8 @@ plt.xlabel('Epochs')
 plt.ylabel('Loss')
 plt.legend()
 plt.title('Training and Validation Loss Over Epochs')
-plt.savefig("training_loss_plot.png")  # Saves the figure as an image
+plt.savefig("training_loss_plot.png")
 
-# Final GPU cleanup if using CUDA
 if torch.cuda.is_available():
     torch.cuda.synchronize()
     torch.cuda.empty_cache()
