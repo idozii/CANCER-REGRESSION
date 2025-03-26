@@ -8,7 +8,7 @@ This project analyzes and predicts cancer mortality rates across various regions
 
 The analysis uses two primary datasets:
 
-### 1. Cancer Regression Data (cancer_reg.csv): Contains comprehensive information about:
+### 1. Cancer Regression Data (cancer_reg.csv): Contains comprehensive information
 
 - Cancer statistics (incidence rate, deaths per year)
 - Economic indicators (median income, poverty percentages)
@@ -174,22 +174,23 @@ The feature importance analysis reveals:
 
 ## Model Development and Optimization
 
-### Gradient Boosting Model Optimization
-
-Grid Search was used to find optimal hyperparameters:
-
-```python
-{'learning_rate': 0.1, 'max_depth': 3, 'n_estimators': 50}
-
-![Gradient Boosting Feature Importance](/figure/Figure_6.png)
-
 ### Neural Network Implementation
 
-A custom deep neural network was implemented with:
+A custom deep neural network was implemented with PyTorch:
+
 - Multiple dense layers with batch normalization
 - Dropout layers for regularization
 - Early stopping to prevent overfitting
 - Learning rate scheduling
+
+The neural network training included:
+
+- GPU acceleration where available
+- Batch normalization for training stability
+- Dropout layers for regularization
+- Leaky ReLU activation functions
+- Learning rate scheduling with ReduceLROnPlateau
+- Early stopping to prevent overfitting
 
 ```python
 class ImprovedNN(nn.Module):
@@ -212,4 +213,46 @@ class ImprovedNN(nn.Module):
         self.dropout4 = nn.Dropout(0.2)
         
         self.fc5 = nn.Linear(32, 1)
+        
+    def forward(self, x):
+        x = torch.nn.functional.leaky_relu(self.fc1(x), negative_slope=0.1)
+        x = self.bn1(x)
+        x = self.dropout1(x)
+        
+        x = torch.nn.functional.leaky_relu(self.fc2(x), negative_slope=0.1)
+        x = self.bn2(x)
+        x = self.dropout2(x)
+        
+        x = torch.nn.functional.leaky_relu(self.fc3(x), negative_slope=0.1)
+        x = self.bn3(x)
+        x = self.dropout3(x)
+        
+        x = torch.nn.functional.leaky_relu(self.fc4(x), negative_slope=0.1)
+        x = self.bn4(x)
+        x = self.dropout4(x)
+        
+        x = self.fc5(x)
+        return x
+```
 
+### Gradient Boosting Model Optimization
+
+Grid Search was used to find optimal hyperparameters:
+
+```python
+gb = GradientBoostingRegressor(n_estimators=50, learning_rate=0.1, max_depth=3, random_state=42)
+gb.fit(X_train, y_train)
+```
+
+![Gradient Boosting Feature Importance](/figure/Figure_6.png)
+
+## Model Evaluation and Comparison
+
+Multiple regression models were evaluated:
+
+```python
+mae_pytorch = mean_absolute_error(y_actual_list, y_pred_list)
+mse_pytorch = mean_squared_error(y_actual_list, y_pred_list)
+rmse_pytorch = np.sqrt(mse_pytorch)
+r2_pytorch = r2_score(y_actual_list, y_pred_list)
+```
