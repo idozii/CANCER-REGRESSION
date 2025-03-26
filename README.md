@@ -261,7 +261,7 @@ r2_pytorch = r2_score(y_actual_list, y_pred_list)
 |-------|---------------------|-------------------|------|
 | Gradient Boosting | 12.82 | 265.845 | 16.305 |
 | Linear Regression | 12.734 | 267.904 | 16.368 |
-| Random Forest Regressor | 13.019 | 282.015 | 16.793 |
+| Random Forest Regressor | 12.797 | 282.015 | 16.793 |
 | Neural Network Regressor | 13.113 | 287.224 | 16.948 |
 | Decision Tree Regressor | 18.988 | 595.299 | 24.399 |
 
