@@ -265,6 +265,34 @@ r2_pytorch = r2_score(y_actual_list, y_pred_list)
 | Neural Network Regressor | 13.113 | 287.224 | 16.948 |
 | Decision Tree Regressor | 18.988 | 595.299 | 24.399 |
 
+## Model Explanation and Performance Analysis
+
+### Decision Tree Performance Discrepancy
+
+The Decision Tree Regressor shows an interesting pattern in its error metrics, with its mean squared error (MSE) of 595.299 being substantially higher than what its mean absolute error (MAE) of 18.988 might suggest. This significant difference reveals important characteristics about both the model and the data:
+
+1. **Error Weighting**: MSE squares errors while MAE takes absolute values, making MSE much more sensitive to large errors.
+
+2. **Prediction Patterns**: The large MSE/MAE ratio indicates that while many predictions are reasonably close (as reflected in the moderate MAE), the model makes some very large errors on specific data points that dramatically impact the MSE.
+
+3. **Model Limitations**: Decision trees create stepwise predictions by splitting data into discrete regions. For continuous targets like cancer death rates, this can result in significant errors at boundary cases or for observations that fall into regions with limited training examples.
+
+4. **Distributional Issues**: The high MSE suggests the errors aren't uniformly distributed - instead, there's a "long tail" of large errors that the squared penalty magnifies.
+
+### Model Comparison Insights
+
+When comparing all models, several patterns emerge:
+
+1. **Ensemble Advantage**: The top-performing models (Gradient Boosting and Random Forest) are ensemble methods that combine multiple decision trees, effectively addressing the limitations of individual trees.
+
+2. **Linear vs. Non-linear**: The Linear Regression model performs surprisingly well, suggesting that many relationships in the data have substantial linear components.
+
+3. **Neural Network Complexity**: Despite its sophisticated architecture, the Neural Network doesn't outperform simpler models, possibly due to the moderate dataset size or the predominantly statistical nature of the relationships.
+
+4. **Model-Feature Alignment**: The Gradient Boosting model's superior performance likely stems from its ability to capture both the main effects and complex interactions between education, income, and health variables.
+
+This analysis reinforces that model selection should consider not just overall error metrics but also the pattern and distribution of errors across different predictions.
+
 ![Model Comparison](/figure/Figure_7.png)
 
 ### Model Diagnostics
