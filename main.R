@@ -1,143 +1,133 @@
-# Install required packages if not already installed
-if (!require("tidyverse")) install.packages("tidyverse")
-if (!require("caret")) install.packages("caret")
-if (!require("randomForest")) install.packages("randomForest")
-if (!require("e1071")) install.packages("e1071")
-if (!require("neuralnet")) install.packages("neuralnet")
-
-# Load libraries
-# Set up a personal library location
 lib_path <- file.path(Sys.getenv("HOME"), "R", "library")
 dir.create(lib_path, recursive = TRUE, showWarnings = FALSE)
-
-# Install packages to your personal library
-install.packages(c("tidyverse", "caret", "randomForest", "e1071", "neuralnet"), 
-                 lib = lib_path, 
-                 repos = "https://cran.rstudio.com/")
-
-# Update .libPaths() to include your personal library
 .libPaths(c(lib_path, .libPaths()))
 
-# Set theme for plots
-theme_set(theme_bw())
+avghouseholdsize_data <- read.csv('data/avg-household-size.csv', stringsAsFactors = FALSE)
+cancereg_data <- read.csv('data/cancer_reg.csv', stringsAsFactors = FALSE)
 
-# Read data
-avghouseholdsize_data <- read.csv('data/avg-household-size.csv')
-cancereg_data <- read.csv('data/cancer_reg.csv')
-
-# Data preprocessing - impute missing values
 numeric_cols <- sapply(cancereg_data, is.numeric)
-if (any(numeric_cols)) {
-  for (col in names(cancereg_data)[numeric_cols]) {
-    if (any(is.na(cancereg_data[[col]]))) {
-      cancereg_data[[col]][is.na(cancereg_data[[col]])] <- median(cancereg_data[[col]], na.rm = TRUE)
-    }
+for (col in names(cancereg_data)[numeric_cols]) {
+  if (any(is.na(cancereg_data[[col]]))) {
+    cancereg_data[[col]][is.na(cancereg_data[[col]])] <- median(cancereg_data[[col]], na.rm = TRUE)
   }
 }
 
 categorical_cols <- sapply(cancereg_data, is.character) | sapply(cancereg_data, is.factor)
-if (any(categorical_cols)) {
-  for (col in names(cancereg_data)[categorical_cols]) {
-    if (any(is.na(cancereg_data[[col]]))) {
-      mode_val <- names(sort(table(cancereg_data[[col]]), decreasing = TRUE))[1]
-      cancereg_data[[col]][is.na(cancereg_data[[col]])] <- mode_val
-    }
+for (col in names(cancereg_data)[categorical_cols]) {
+  if (any(is.na(cancereg_data[[col]]))) {
+    mode_val <- names(sort(table(cancereg_data[[col]]), decreasing = TRUE))[1]
+    cancereg_data[[col]][is.na(cancereg_data[[col]])] <- mode_val
   }
 }
 
-# Merge data
-merged_data <- merge(avghouseholdsize_data, cancereg_data, by = "geography", how = "inner")
+merged_data <- merge(avghouseholdsize_data, cancereg_data, by = "geography")
 
-# Prepare features
 all_features <- names(merged_data)[names(merged_data) != "target_deathrate"]
 X <- merged_data[, all_features]
 y <- merged_data$target_deathrate
 
-# Create dummy variables for categorical columns
 if (any(categorical_cols)) {
-  X <- model.matrix(~ ., data = X)[, -1] # Remove intercept
+  X <- model.matrix(~ ., data = X)[, -1]
 }
 
-# Split data
 set.seed(42)
-train_index <- createDataPartition(y, p = 0.8, list = FALSE)
-X_train <- X[train_index, ]
-X_test <- X[-train_index, ]
-y_train <- y[train_index]
-y_test <- y[-train_index]
+n <- length(y)
+train_indices <- sample(1:n, size = floor(0.8 * n))
+X_train <- X[train_indices, ]
+X_test <- X[-train_indices, ]
+y_train <- y[train_indices]
+y_test <- y[-train_indices]
 
-# Feature selection with RandomForest
-rf_model <- randomForest(x = X, y = y, importance = TRUE)
-feature_importance <- importance(rf_model)
-feature_importance_df <- data.frame(
-  Feature = rownames(feature_importance),
-  Importance = feature_importance[, "%IncMSE"]
-)
-feature_importance_df <- feature_importance_df[order(feature_importance_df$Importance, decreasing = TRUE), ]
-top_features <- feature_importance_df$Feature[1:20]
+correlations <- numeric(ncol(X))
+for (i in 1:ncol(X)) {
+  correlations[i] <- abs(cor(X[,i], y, use = "complete.obs"))
+}
+top_feature_indices <- order(correlations, decreasing = TRUE)[1:min(20, ncol(X))]
+top_features <- colnames(X)[top_feature_indices]
 
-# Select top features
 X_train_top <- X_train[, top_features]
 X_test_top <- X_test[, top_features]
 
-# Scale features
-preprocess_params <- preProcess(X_train_top, method = c("center", "scale"))
-X_train_top_scaled <- predict(preprocess_params, X_train_top)
-X_test_top_scaled <- predict(preprocess_params, X_test_top)
+X_train_means <- colMeans(X_train_top)
+X_train_sds <- apply(X_train_top, 2, sd)
+X_train_top_scaled <- scale(X_train_top, center = X_train_means, scale = X_train_sds)
+X_test_top_scaled <- scale(X_test_top, center = X_train_means, scale = X_train_sds)
 
-# Prepare data for neural network
-nn_data_train <- cbind(X_train_top_scaled, target_deathrate = y_train)
-nn_formula <- as.formula(paste("target_deathrate ~", paste(colnames(X_train_top_scaled), collapse = " + ")))
+cat("\nTop features selected by correlation:\n")
+for (i in 1:length(top_features)) {
+  cat(paste(i, ":", top_features[i], "\n"))
+}
 
-# Train neural network
+cat("\nStarting Random Forest training...\n")
 start_time <- Sys.time()
-nn_model <- neuralnet(
-  formula = nn_formula,
-  data = nn_data_train,
-  hidden = c(128, 64, 32),
-  linear.output = TRUE,
-  threshold = 0.01,
-  stepmax = 1e+06,
-  rep = 1,
-  act.fct = "relu"
+
+rf_model <- randomForest(
+  x = data.frame(X_train_top_scaled),
+  y = y_train,
+  ntree = 500,
+  mtry = floor(sqrt(ncol(X_train_top_scaled))),
+  nodesize = 5,
+  importance = TRUE,
+  sampsize = min(5000, length(y_train)),
+  replace = TRUE,
+  keep.forest = TRUE
 )
+
 end_time <- Sys.time()
-training_time <- end_time - start_time
-print(paste("Total training time:", as.numeric(training_time), "seconds"))
+training_time <- difftime(end_time, start_time, units = "mins")
+cat(paste("Total training time:", round(as.numeric(training_time), 2), "minutes\n"))
 
-# Make predictions
-nn_predictions <- compute(nn_model, X_test_top_scaled)
-y_pred <- nn_predictions$net.result
+cat("\nRandom Forest Model Summary:\n")
+print(rf_model)
 
-# Evaluate model
+cat("\nVariable Importance (Top 10):\n")
+var_imp <- importance(rf_model)
+var_imp_df <- data.frame(
+  Feature = rownames(var_imp),
+  IncMSE = var_imp[, "%IncMSE"],
+  IncNodePurity = var_imp[, "IncNodePurity"]
+)
+var_imp_sorted <- var_imp_df[order(var_imp_df$IncMSE, decreasing = TRUE), ]
+print(head(var_imp_sorted, 10))
+
+y_pred <- predict(rf_model, newdata = data.frame(X_test_top_scaled))
+
 mae <- mean(abs(y_pred - y_test))
 mse <- mean((y_pred - y_test)^2)
+rmse <- sqrt(mse)
 r2 <- 1 - sum((y_test - y_pred)^2) / sum((y_test - mean(y_test))^2)
 
-# Print results
-print("R Neural Network Regressor")
-print(paste('Mean Absolute Error:', mae))
-print(paste('Mean Squared Error:', mse))
-print(paste('R2 Score:', r2))
+cat("\nRandom Forest Regression Results:\n")
+cat(paste('Mean Absolute Error:', round(mae, 4), '\n'))
+cat(paste('Mean Squared Error:', round(mse, 4), '\n'))
+cat(paste('Root Mean Squared Error:', round(rmse, 4), '\n'))
+cat(paste('R2 Score:', round(r2, 4), '\n'))
 
-# Plot training progress
-# Note: In R neuralnet, we don't have direct access to loss history like in PyTorch
-# You would need to modify the code to store loss values during training
-# This is a placeholder for where you would plot training/validation loss
-plot_data <- data.frame(
-  x = 1:length(y_pred),
-  Predicted = y_pred,
-  Actual = y_test
-)
+plot_data <- data.frame(Predicted = y_pred, Actual = y_test)
 
-ggplot() +
-  geom_point(data = plot_data, aes(x = Actual, y = Predicted)) +
-  geom_abline(intercept = 0, slope = 1, color = "red", linetype = "dashed") +
-  labs(
-    title = "Predicted vs Actual Values",
-    x = "Actual Values",
-    y = "Predicted Values"
-  ) +
-  theme_minimal()
+png("rf_prediction_comparison.png", width = 800, height = 600)
+plot(plot_data$Actual, plot_data$Predicted, 
+     main = "Random Forest: Predicted vs Actual Values",
+     xlab = "Actual Cancer Death Rate", 
+     ylab = "Predicted Cancer Death Rate",
+     pch = 16,
+     col = "darkblue",
+     cex = 0.7)
+abline(0, 1, col = "red", lty = 2, lwd = 2)
+legend("topleft", legend = c(
+  paste("MAE:", round(mae, 2)),
+  paste("R²:", round(r2, 2))
+), bty = "n")
+dev.off()
 
-ggsave("prediction_comparison.png", width = 10, height = 6)
+png("rf_feature_importance.png", width = 900, height = 600)
+par(mar = c(5, 10, 4, 2))
+barplot(rev(head(var_imp_sorted$IncMSE, 10)), 
+        names.arg = rev(head(var_imp_sorted$Feature, 10)), 
+        horiz = TRUE, 
+        col = "steelblue",
+        xlab = "% Increase in MSE when feature is permuted",
+        main = "Random Forest Variable Importance",
+        las = 1,
+        cex.names = 0.8)
+dev.off()
