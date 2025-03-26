@@ -256,3 +256,70 @@ mse_pytorch = mean_squared_error(y_actual_list, y_pred_list)
 rmse_pytorch = np.sqrt(mse_pytorch)
 r2_pytorch = r2_score(y_actual_list, y_pred_list)
 ```
+
+| Model                    | Mean Squared Error | R² Score | RMSE    |
+|--------------------------|--------------------|----------|---------|
+| Gradient Boosting        | 371.288            | 0.501    | 19.269  |
+| Random Forest Regressor  | 382.370            | 0.486    | 19.555  |
+| Linear Regression        | 383.954            | 0.484    | 19.595  |
+| Neural Network Regressor | 419.203            | 0.436    | 20.474  |
+| Decision Tree Regressor  | 440.264            | 0.408    | 20.982  |
+
+![Model Comparison](/figure/Figure_7.png)
+
+### Model Diagnostics
+
+The model's predictive performance was assessed through various visualizations:
+
+1. **Prediction vs. Actual Values**:
+   ![Prediction vs Actual](/figure/prediction_vs_actual.png)
+
+2. **Residual Analysis**:
+   ![Residual Plot](/figure/residual_plot.png)
+
+3. **Residual Distribution**:
+   ![Residual Distribution](/figure/residual_distribution.png)
+
+The residual analysis shows:
+
+- Generally random distribution of residuals around zero
+- Slight heteroscedasticity at higher predicted values
+- Approximately normal distribution of residuals
+
+## Key Findings
+
+1. **Education as Primary Factor**: The percentage of population with bachelor's degrees is the strongest predictor of cancer mortality rates, showing an inverse relationship.
+
+2. **Cancer Incidence Rate Impact**: Regions with higher cancer incidence rates show higher mortality rates, though not in strict proportion.
+
+3. **Economic Influence**: Median income significantly impacts cancer death rates, likely due to its effect on healthcare access and quality.
+
+4. **Model Performance**: The Gradient Boosting Regressor achieved the best performance with an R² score of 0.501 and MSE of 371.288.
+
+5. **Feature Interactions**: Interactions between top features (like education and income) improved model performance, suggesting complex relationships between socioeconomic factors and cancer outcomes.
+
+## Implementation Details
+
+The project was implemented using both Python and R, with Python handling the primary machine learning models:
+
+- **Python Implementation**:
+  - PyTorch for neural network implementation
+  - Scikit-learn for traditional ML models
+  - Data processing with Pandas and NumPy
+  - Visualization with Matplotlib and Seaborn
+
+- **Hardware Acceleration**:
+  - GPU acceleration for neural network training when available
+  - Batch processing for memory efficiency
+
+- **Cross-validation**:
+  - Train-test split (80/20) for model evaluation
+  - Early stopping based on validation loss
+
+## Conclusion
+
+This project demonstrates the complex interplay of socioeconomic, demographic, and health factors in determining cancer mortality rates. The findings highlight that education level and economic factors are stronger predictors of cancer death rates than many direct healthcare measures.
+
+The Gradient Boosting model provided the most accurate predictions, capturing the non-linear relationships between the predictors and cancer mortality rates better than other approaches, including the neural network implementation.
+
+These findings suggest that public health interventions targeting education access and economic inequalities could be effective strategies for reducing cancer mortality rates, alongside traditional medical interventions focused on cancer treatment and early detection.
