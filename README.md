@@ -257,13 +257,13 @@ rmse_pytorch = np.sqrt(mse_pytorch)
 r2_pytorch = r2_score(y_actual_list, y_pred_list)
 ```
 
-| Model                    | Mean Absolute Error | Mean Squared Error | R² Score | RMSE    |
-|--------------------------|---------------------|--------------------|--------------------|---------|
-| Gradient Boosting        | 14.830              | 371.288            | 0.501    | 19.269  |
-| Random Forest Regressor  | 15.123              | 382.370            | 0.486    | 19.555  |
-| Linear Regression        | 15.214              | 383.954            | 0.484    | 19.595  |
-| Neural Network Regressor | 16.381              | 419.203            | 0.436    | 20.474  |
-| Decision Tree Regressor  | 16.753              | 440.264            | 0.408    | 20.982  |
+| Model | Mean Absolute Error | Mean Squared Error | RMSE |
+|-------|---------------------|-------------------|------|
+| Gradient Boosting | 12.82 | 265.845 | 16.305 |
+| Linear Regression | 12.734 | 267.904 | 16.368 |
+| Random Forest Regressor | 13.019 | 282.015 | 16.793 |
+| Neural Network Regressor | 13.113 | 287.224 | 16.948 |
+| Decision Tree Regressor | 18.988 | 595.299 | 24.399 |
 
 ![Model Comparison](/figure/Figure_7.png)
 

@@ -403,7 +403,7 @@ plt.savefig("figure/Figure_7.png")
 plt.close()
 
 print("\nTable for README.md:")
-print("| Model | Mean Absolute Error | Mean Squared Error | R² Score | RMSE |")
+print("| Model | Mean Absolute Error | Mean Squared Error | RMSE |")
 print("|-------|---------------------|--------------------|--------------------|---------|")
 for _, row in models_df.iterrows():
     print(f"| {row['Model']} | {row['Mean Absolute Error']} | {row['Mean Squared Error']} |")
