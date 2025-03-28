@@ -322,7 +322,7 @@ The residual analysis shows:
 
 3. **Economic Influence**: Median income significantly impacts cancer death rates, likely due to its effect on healthcare access and quality.
 
-4. **Model Performance**: The Gradient Boosting Regressor achieved the best performance with an R² score of 0.501 and MSE of 371.288.
+4. **Model Performance**: The Neural Network Regressor achieved the best performance with a MAE score of 12.667 and MSE of 287.224.
 
 5. **Feature Interactions**: Interactions between top features (like education and income) improved model performance, suggesting complex relationships between socioeconomic factors and cancer outcomes.
 
