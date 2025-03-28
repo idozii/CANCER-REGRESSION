@@ -374,7 +374,7 @@ models_df['RMSE'] = models_df['RMSE'].round(3)
 print("\nModel Comparison:")
 print(models_df)
 
-models_df.to_csv("model_comparison_results.csv", index=False)
+models_df.to_csv("figure/model_comparison_results.csv", index=False)
 
 plt.figure(figsize=(14, 8))
 
