@@ -254,7 +254,6 @@ Multiple regression models were evaluated:
 mae_pytorch = mean_absolute_error(y_actual_list, y_pred_list)
 mse_pytorch = mean_squared_error(y_actual_list, y_pred_list)
 rmse_pytorch = np.sqrt(mse_pytorch)
-r2_pytorch = r2_score(y_actual_list, y_pred_list)
 ```
 
 | Model | Mean Absolute Error | Mean Squared Error | RMSE |
@@ -262,7 +261,7 @@ r2_pytorch = r2_score(y_actual_list, y_pred_list)
 | Gradient Boosting | 12.82 | 265.845 | 16.305 |
 | Linear Regression | 12.734 | 267.904 | 16.368 |
 | Random Forest Regressor | 12.797 | 282.015 | 16.793 |
-| Neural Network Regressor | 13.113 | 287.224 | 16.948 |
+| Neural Network Regressor | 12.67 | 273.87 | 16.55 |
 | Decision Tree Regressor | 18.988 | 595.299 | 24.399 |
 
 ## Model Explanation and Performance Analysis
