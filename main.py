@@ -19,7 +19,7 @@ import os
 
 os.makedirs("figure", exist_ok=True)
 
-def remove_outliers(df, columns, threshold=2.5):
+def remove_outliers(df, columns, threshold=1.5):
     df_clean = df.copy()
     outliers_removed = 0
     
