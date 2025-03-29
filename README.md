@@ -3,8 +3,7 @@
 ## 📂 Project Structure
 
 ```plaintext
-| Folder/File          | Description                                      
-|----------------------|------------
+| Folder/File                                              
 | 📄 README.md         
 | 📂 data             
 | ├── 📄 cancer_reg.csv 
