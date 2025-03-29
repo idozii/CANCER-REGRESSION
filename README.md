@@ -4,14 +4,12 @@
 
 ```plaintext
 | Folder/File                                              
-| 📄 README.md         
+| 📄 README.md      
+| 📄 main.py
+| 📄 main.R
 | 📂 data             
 | ├── 📄 cancer_reg.csv 
 | ├── 📄 avg-household-size.csv 
-| 📂 src             
-| ├── 📄 data_preprocessing.py 
-| ├── 📄 model_training.py
-| ├── 📄 model_evaluation.py 
 | 📂 figures           
 | ├── 📄 Figure_1.png 
 | ├── 📄 Figure_2.png 
