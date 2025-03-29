@@ -1,5 +1,34 @@
 # 🎗️ CANCER REGRESSION ANALYSIS PROJECT
 
+## 📂 Project Structure
+
+```plaintext
+| Folder/File          | Description                                      |
+|----------------------|--------------------------------------------------|
+| 📄 README.md         | Project overview and documentation               |
+| 📂 data              | Contains datasets                                |
+| ├── 📄 cancer_reg.csv | Cancer regression data                           |
+| ├── 📄 avg-household-size.csv | Average household size data              |
+| 📂 notebooks         | Jupyter notebooks for analysis                   |
+| ├── 📄 data_cleaning.ipynb | Data cleaning notebook                      |
+| ├── 📄 exploratory_analysis.ipynb | Exploratory data analysis notebook  |
+| ├── 📄 model_development.ipynb | Model development notebook              |
+| 📂 src               | Source code for data processing and model training|
+| ├── 📄 data_preprocessing.py | Data preprocessing script                 |
+| ├── 📄 model_training.py | Model training script                         |
+| ├── 📄 model_evaluation.py | Model evaluation script                     |
+| 📂 figures           | Figures and plots generated during analysis      |
+| ├── 📄 Figure_1.png  | Figure 1                                         |
+| ├── 📄 Figure_2.png  | Figure 2                                         |
+| ├── 📄 Figure_3.png  | Figure 3                                         |
+| ├── 📄 Figure_4.png  | Figure 4                                         |
+| ├── 📄 Figure_5.png  | Figure 5                                         |
+| ├── 📄 Figure_6.png  | Figure 6                                         |
+| ├── 📄 Figure_7.png  | Figure 7                                         |
+| 📄 requirements.txt  | Python dependencies                              |
+| 📄 setup.py          | Project setup script                             |
+```
+
 ## 📄 Overview
 
 This project analyzes and predicts cancer mortality rates across various regions using machine learning models. The analysis leverages demographic, socioeconomic, and health-related data to identify key predictors of cancer death rates.
