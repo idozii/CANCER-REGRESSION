@@ -3,30 +3,26 @@
 ## 📂 Project Structure
 
 ```plaintext
-| Folder/File          | Description                                      |
-|----------------------|--------------------------------------------------|
-| 📄 README.md         | Project overview and documentation               |
-| 📂 data              | Contains datasets                                |
-| ├── 📄 cancer_reg.csv | Cancer regression data                           |
-| ├── 📄 avg-household-size.csv | Average household size data              |
-| 📂 notebooks         | Jupyter notebooks for analysis                   |
-| ├── 📄 data_cleaning.ipynb | Data cleaning notebook                      |
-| ├── 📄 exploratory_analysis.ipynb | Exploratory data analysis notebook  |
-| ├── 📄 model_development.ipynb | Model development notebook              |
-| 📂 src               | Source code for data processing and model training|
-| ├── 📄 data_preprocessing.py | Data preprocessing script                 |
-| ├── 📄 model_training.py | Model training script                         |
-| ├── 📄 model_evaluation.py | Model evaluation script                     |
-| 📂 figures           | Figures and plots generated during analysis      |
-| ├── 📄 Figure_1.png  | Figure 1                                         |
-| ├── 📄 Figure_2.png  | Figure 2                                         |
-| ├── 📄 Figure_3.png  | Figure 3                                         |
-| ├── 📄 Figure_4.png  | Figure 4                                         |
-| ├── 📄 Figure_5.png  | Figure 5                                         |
-| ├── 📄 Figure_6.png  | Figure 6                                         |
-| ├── 📄 Figure_7.png  | Figure 7                                         |
-| 📄 requirements.txt  | Python dependencies                              |
-| 📄 setup.py          | Project setup script                             |
+| Folder/File          | Description                                      
+|----------------------|------------
+| 📄 README.md         
+| 📂 data             
+| ├── 📄 cancer_reg.csv 
+| ├── 📄 avg-household-size.csv 
+| 📂 src             
+| ├── 📄 data_preprocessing.py 
+| ├── 📄 model_training.py
+| ├── 📄 model_evaluation.py 
+| 📂 figures           
+| ├── 📄 Figure_1.png 
+| ├── 📄 Figure_2.png 
+| ├── 📄 Figure_3.png  
+| ├── 📄 Figure_4.png  
+| ├── 📄 Figure_5.png  
+| ├── 📄 Figure_6.png  
+| ├── 📄 Figure_7.png  
+| 📄 requirements.txt  
+| 📄 setup.py          
 ```
 
 ## 📄 Overview
