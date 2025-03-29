@@ -1,20 +1,20 @@
-# CANCER REGRESSION ANALYSIS PROJECT
+# 🎗️ CANCER REGRESSION ANALYSIS PROJECT
 
-## Overview
+## 📄 Overview
 
 This project analyzes and predicts cancer mortality rates across various regions using machine learning models. The analysis leverages demographic, socioeconomic, and health-related data to identify key predictors of cancer death rates.
 
-## Dataset Description
+## 📊 Dataset Description
 
 The analysis uses two primary datasets:
 
 ### 1. Cancer Regression Data (cancer_reg.csv): Contains comprehensive information
 
-- Cancer statistics (incidence rate, deaths per year)
-- Economic indicators (median income, poverty percentages)
-- Demographic information (age distribution, education levels)
-- Healthcare coverage metrics (public and private insurance)
-- Population characteristics (race, marital status)
+- 📈 Cancer statistics (incidence rate, deaths per year)
+- 💰 Economic indicators (median income, poverty percentages)
+- 👥 Demographic information (age distribution, education levels)
+- 🏥 Healthcare coverage metrics (public and private insurance)
+- 🌍 Population characteristics (race, marital status)
 
 ### 2. Average Household Size Data (avg-household-size.csv): Contains regional household size statistics
 
@@ -43,9 +43,9 @@ The primary target variable is target_deathrate, representing the death rate due
 | pctmarriedhouseholds     | Percentage of married households                              |
 | birthrate                | Birth rate in the region                                      |
 
-## Data Preparation and Cleaning
+## 🧹 Data Preparation and Cleaning
 
-### Initial Data Assessment
+### 📝 Initial Data Assessment
 
 Both datasets were examined for data quality issues:
 
@@ -55,7 +55,7 @@ Both datasets were examined for data quality issues:
   - `pctemployed16_over`: 2,895 non-null values
   - `pctprivatecoveragealone`: 2,438 non-null values
 
-### Non-null checking (avghouseholdsize_data)
+### ✅ Non-null checking (avghouseholdsize_data)
 
 | Column            | Non-Null Count | Dtype   |
 |-------------------|----------------|---------|
@@ -64,7 +64,7 @@ Both datasets were examined for data quality issues:
 | avghouseholdsize  | 3220 non-null  | float64 |
 | geography         | 3220 non-null  | object  |
 
-### Non-null checking (cancereg_data)
+### ✅ Non-null checking (cancereg_data)
 
 | Column                   | Non-Null Count | Dtype   |
 |--------------------------|----------------|---------|
@@ -102,7 +102,7 @@ Both datasets were examined for data quality issues:
 | pctmarriedhouseholds     | 3047 non-null  | float64 |
 | birthrate                | 3047 non-null  | float64 |
 
-### Data Cleaning Process
+### 🧹 Data Cleaning Process
 
 The cleaning process included:
 
@@ -115,30 +115,30 @@ The cleaning process included:
 
 After merging, the final dataset contained 591 complete records with 36 features.
 
-## Exploratory Data Analysis
+## 📊 Exploratory Data Analysis
 
 The distribution and relationships in the data were visualized:
 
-### Target Variable Analysis
+### 🎯 Target Variable Analysis
 
 ![Histogram of target_deathrate](/figure/Figure_1.png)
 
 - The target death rate shows a roughly normal distribution with values primarily between 150-200 deaths per 100,000 population
 
-### Statistical Distribution Analysis
+### 📈 Statistical Distribution Analysis
 
 ![Boxplot of target_deathrate](/figure/Figure_2.png)
 
 - Boxplot analysis revealed moderate outliers in the death rate data, which were addressed in data preprocessing
 
-### Income Level Relationship
+### 💰 Income Level Relationship
 
 ![Boxplot by Income Brackets](/figure/Figure_3.png)
 
 - Clear relationship between income brackets and cancer death rates
 - Lower income areas generally show higher cancer death rates
 
-### Feature Relationships
+### 🔍 Feature Relationships
 
 ![Feature Pairplot](/figure/Figure_4.png)
 
@@ -146,7 +146,7 @@ The distribution and relationships in the data were visualized:
 - Positive correlation between cancer incidence rate and death rate
 - Significant relationship between health insurance coverage and death rate
 
-## Feature Selection
+## 🌟 Feature Selection
 
 A Random Forest Regressor was used to identify the most important predictors:
 
@@ -172,9 +172,9 @@ The feature importance analysis reveals:
 - Economic factors (`medincome`) play a significant role
 - High school education levels (`pcths25_over`) are also influential
 
-## Model Development and Optimization
+## 🚀 Model Development and Optimization
 
-### Neural Network Implementation
+### 🤖 Neural Network Implementation
 
 A custom deep neural network was implemented with PyTorch:
 
@@ -235,7 +235,7 @@ class ImprovedNN(nn.Module):
         return x
 ```
 
-### Gradient Boosting Model Optimization
+### 🌲 Gradient Boosting Model Optimization
 
 Grid Search was used to find optimal hyperparameters:
 
@@ -246,7 +246,7 @@ gb.fit(X_train, y_train)
 
 ![Gradient Boosting Feature Importance](/figure/Figure_6.png)
 
-## Model Evaluation and Comparison
+## 📊 Model Evaluation and Comparison
 
 Multiple regression models were evaluated:
 
@@ -264,9 +264,9 @@ rmse_pytorch = np.sqrt(mse_pytorch)
 | Neural Network Regressor | 12.67 | 273.87 | 16.55 |
 | Decision Tree Regressor | 18.988 | 595.299 | 24.399 |
 
-## Model Explanation and Performance Analysis
+## 📈 Model Explanation and Performance Analysis
 
-### Decision Tree Performance Discrepancy
+### 🌳 Decision Tree Performance Discrepancy
 
 The Decision Tree Regressor shows an interesting pattern in its error metrics, with its mean squared error (MSE) of 595.299 being substantially higher than what its mean absolute error (MAE) of 18.988 might suggest. This significant difference reveals important characteristics about both the model and the data:
 
@@ -278,7 +278,7 @@ The Decision Tree Regressor shows an interesting pattern in its error metrics, w
 
 4. **Distributional Issues**: The high MSE suggests the errors aren't uniformly distributed - instead, there's a "long tail" of large errors that the squared penalty magnifies.
 
-### Model Comparison Insights
+### 🔍 Model Comparison Insights
 
 When comparing all models, several patterns emerge:
 
@@ -294,17 +294,17 @@ This analysis reinforces that model selection should consider not just overall e
 
 ![Model Comparison](/figure/Figure_7.png)
 
-### Model Diagnostics
+### 🔍 Model Diagnostics
 
 The model's predictive performance was assessed through various visualizations:
 
-1. **Prediction vs. Actual Values**:
+1. **📈 Prediction vs. Actual Values**:
    ![Prediction vs Actual](/figure/prediction_vs_actual.png)
 
-2. **Residual Analysis**:
+2. **📉 Residual Analysis**:
    ![Residual Plot](/figure/residual_plot.png)
 
-3. **Residual Distribution**:
+3. **📊 Residual Distribution**:
    ![Residual Distribution](/figure/residual_distribution.png)
 
 The residual analysis shows:
@@ -313,37 +313,37 @@ The residual analysis shows:
 - Slight heteroscedasticity at higher predicted values
 - Approximately normal distribution of residuals
 
-## Key Findings
+## 🔑 Key Findings
 
-1. **Education as Primary Factor**: The percentage of population with bachelor's degrees is the strongest predictor of cancer mortality rates, showing an inverse relationship.
+1. **🎓 Education as Primary Factor**: The percentage of population with bachelor's degrees is the strongest predictor of cancer mortality rates, showing an inverse relationship.
 
-2. **Cancer Incidence Rate Impact**: Regions with higher cancer incidence rates show higher mortality rates, though not in strict proportion.
+2. **📈 Cancer Incidence Rate Impact**: Regions with higher cancer incidence rates show higher mortality rates, though not in strict proportion.
 
-3. **Economic Influence**: Median income significantly impacts cancer death rates, likely due to its effect on healthcare access and quality.
+3. **💰 Economic Influence**: Median income significantly impacts cancer death rates, likely due to its effect on healthcare access and quality.
 
-4. **Model Performance**: The Neural Network Regressor achieved the best performance with a MAE score of 12.667 and MSE of 287.224.
+4. **🤖 Model Performance**: The Neural Network Regressor achieved the best performance with a MAE score of 12.667 and MSE of 287.224.
 
-5. **Feature Interactions**: Interactions between top features (like education and income) improved model performance, suggesting complex relationships between socioeconomic factors and cancer outcomes.
+5. **🔗 Feature Interactions**: Interactions between top features (like education and income) improved model performance, suggesting complex relationships between socioeconomic factors and cancer outcomes.
 
-## Implementation Details
+## 🛠️ Implementation Details
 
 The project was implemented using both Python and R, with Python handling the primary machine learning models:
 
-- **Python Implementation**:
+- **🐍 Python Implementation**:
   - PyTorch for neural network implementation
   - Scikit-learn for traditional ML models
   - Data processing with Pandas and NumPy
   - Visualization with Matplotlib and Seaborn
 
-- **Hardware Acceleration**:
+- **⚡ Hardware Acceleration**:
   - GPU acceleration for neural network training when available
   - Batch processing for memory efficiency
 
-- **Cross-validation**:
+- **🔄 Cross-validation**:
   - Train-test split (80/20) for model evaluation
   - Early stopping based on validation loss
 
-## Conclusion
+## 🏁 Conclusion
 
 This project demonstrates the complex interplay of socioeconomic, demographic, and health factors in determining cancer mortality rates. The findings highlight that education level and economic factors are stronger predictors of cancer death rates than many direct healthcare measures.
 
