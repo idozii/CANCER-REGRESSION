@@ -139,7 +139,7 @@ X_test_tensor = torch.tensor(X_test_scaled, dtype=torch.float32)
 y_train_tensor = torch.tensor(y_train.values, dtype=torch.float32).unsqueeze(1)
 y_test_tensor = torch.tensor(y_test.values, dtype=torch.float32).unsqueeze(1)
 
-batch_size = 32
+batch_size = 64
 train_dataset = TensorDataset(X_train_tensor, y_train_tensor)
 test_dataset = TensorDataset(X_test_tensor, y_test_tensor)
 train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, pin_memory=True)
@@ -365,6 +365,34 @@ print("Random Forest Regressor")
 print(f'Mean Absolute Error: {mae_rf:.4f}')
 print(f'Mean Squared Error: {mse_rf:.4f}')
 print(f'Root Mean Squared Error: {rmse_rf:.4f}')
+
+training_loss = []
+
+# Train the model and record the training loss
+for i in range(1, 101):
+    rf.set_params(n_estimators=i)
+    rf.fit(X_train, y_train)
+    y_train_pred = rf.predict(X_train)
+    mse = mean_squared_error(y_train, y_train_pred)
+    training_loss.append(mse)
+
+plt.figure(figsize=(10, 6))
+plt.plot(range(1, 101), training_loss, marker='o', linestyle='-', color='b')
+plt.xlabel('Number of Trees')
+plt.ylabel('Training Loss (MSE)')
+plt.title('Training Loss of Random Forest Regressor')
+plt.savefig("figure/training_loss_rf.png")
+plt.close()
+
+plt.figure(figsize=(10, 6))
+plt.scatter(y_test, rf_preds, alpha=0.5, color='b')
+plt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], 'r--', lw=2)
+plt.xlabel('Actual Values')
+plt.ylabel('Predicted Values')
+plt.title('Random Forest Regressor: Predictions vs Actual Values')
+plt.grid(True)
+plt.savefig("figure/prediction_vs_actual_rf.png")
+plt.close()
 
 models_data = {
     'Model': ['Gradient Boosting', 'Random Forest Regressor', 'Linear Regression', 
