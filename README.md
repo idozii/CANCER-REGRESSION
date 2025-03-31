@@ -280,11 +280,11 @@ rmse_pytorch = np.sqrt(mse_pytorch)
 
 | Model | Mean Absolute Error | Mean Squared Error | RMSE |
 |-------|---------------------|-------------------|------|
-| Gradient Boosting | 12.82 | 265.845 | 16.305 |
-| Linear Regression | 12.734 | 267.904 | 16.368 |
-| Random Forest Regressor | 12.797 | 282.015 | 16.793 |
-| Neural Network Regressor | 12.67 | 273.87 | 16.55 |
-| Decision Tree Regressor | 18.988 | 595.299 | 24.399 |
+| Gradient Boosting | 9.884 | 141.381 | 11.890 |
+| Linear Regression | 14.834 | 302.124 | 17.382 |
+| Random Forest Regressor | 8.266 | 102.871 | 10.143 |
+| Neural Network Regressor | 186.783 | 34994.641 | 187.069 |
+| Decision Tree Regressor | 12.317 | 255.963 | 15.999 |
 
 ## 📈 Model Explanation and Performance Analysis
 
