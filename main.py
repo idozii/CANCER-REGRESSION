@@ -14,6 +14,8 @@ from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
 from sklearn.linear_model import LinearRegression
 from sklearn.tree import DecisionTreeRegressor
 from scipy import stats
+import statsmodels.api as sm
+from statsmodels.formula.api import ols
 import time
 import os
 
@@ -95,7 +97,14 @@ cleaned_features = all_features.copy()
 if 'geography' in cleaned_features:
     cleaned_features.remove('geography')
 
-merged_data_clean = remove_outliers(merged_data, cleaned_features + ['target_deathrate'], threshold=2.5)
+merged_data_clean = remove_outliers(merged_data, cleaned_features + ['target_deathrate'], threshold=1.5)
+
+group_column = 'avgdeathsperyear'
+anova_model = ols('target_deathrate ~ C({})'.format(group_column), data=merged_data_clean).fit()
+anova_table = sm.stats.anova_lm(anova_model, typ=2)
+
+print("\nANOVA Table:")
+print(anova_table)
 
 X = merged_data_clean[all_features]
 if object_cols:

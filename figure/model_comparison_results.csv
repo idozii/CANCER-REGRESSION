@@ -1,6 +1,6 @@
 Model,Mean Absolute Error,Mean Squared Error,RMSE
-Gradient Boosting,12.82,265.845,16.305
-Linear Regression,12.734,267.904,16.368
-Random Forest Regressor,13.019,282.015,16.793
-Neural Network Regressor,13.024,285.188,16.888
-Decision Tree Regressor,18.988,595.299,24.399
+Random Forest Regressor,8.266,102.871,10.143
+Gradient Boosting,9.884,141.381,11.89
+Decision Tree Regressor,12.317,255.963,15.999
+Linear Regression,14.834,302.124,17.382
+Neural Network Regressor,186.977,35062.66,187.25
