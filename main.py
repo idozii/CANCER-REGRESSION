@@ -259,11 +259,13 @@ y_actual_list = np.vstack(y_actual_list).flatten()
 mae_pytorch = mean_absolute_error(y_actual_list, y_pred_list)
 mse_pytorch = mean_squared_error(y_actual_list, y_pred_list)
 rmse_pytorch = np.sqrt(mse_pytorch)
+r2_pytorch = r2_score(y_actual_list, y_pred_list)
 
 print("\nImproved PyTorch Neural Network Regressor")
 print(f'Mean Absolute Error: {mae_pytorch:.4f}')
 print(f'Mean Squared Error: {mse_pytorch:.4f}')
 print(f'Root Mean Squared Error: {rmse_pytorch:.4f}')
+print(f'R² Score: {r2_pytorch:.4f}')
 
 plt.figure(figsize=(10, 6))
 plt.scatter(y_actual_list, y_pred_list, alpha=0.5)
@@ -313,11 +315,13 @@ gb_preds = gb.predict(X_test)
 mae_gb = mean_absolute_error(y_test, gb_preds)
 mse_gb = mean_squared_error(y_test, gb_preds)
 rmse_gb = np.sqrt(mse_gb)
+r2_gb = r2_score(y_test, gb_preds)
 
 print("Gradient Boosting Regressor")
 print(f'Mean Absolute Error: {mae_gb:.4f}')
 print(f'Mean Squared Error: {mse_gb:.4f}')
 print(f'Root Mean Squared Error: {rmse_gb:.4f}')
+print(f'R² Score: {r2_gb:.4f}')
 
 print("\nTraining additional models for comparison...")
 
@@ -327,11 +331,13 @@ lr_preds = lr.predict(X_test)
 mae_lr = mean_absolute_error(y_test, lr_preds)
 mse_lr = mean_squared_error(y_test, lr_preds)
 rmse_lr = np.sqrt(mse_lr)
+r2_lr = r2_score(y_test, lr_preds)
 
 print("Linear Regression")
 print(f'Mean Absolute Error: {mae_lr:.4f}')
 print(f'Mean Squared Error: {mse_lr:.4f}')
 print(f'Root Mean Squared Error: {rmse_lr:.4f}')
+print(f'R² Score: {r2_lr:.4f}')
 
 dt = DecisionTreeRegressor(random_state=42)
 dt.fit(X_train, y_train)
@@ -339,11 +345,13 @@ dt_preds = dt.predict(X_test)
 mae_dt = mean_absolute_error(y_test, dt_preds)
 mse_dt = mean_squared_error(y_test, dt_preds)
 rmse_dt = np.sqrt(mse_dt)
+r2_dt = r2_score(y_test, dt_preds)
 
 print("Decision Tree Regressor")
 print(f'Mean Absolute Error: {mae_dt:.4f}')
 print(f'Mean Squared Error: {mse_dt:.4f}')
 print(f'Root Mean Squared Error: {rmse_dt:.4f}')
+print(f'R² Score: {r2_dt:.4f}')
 
 rf = RandomForestRegressor(n_estimators=100, random_state=42)
 rf.fit(X_train, y_train)
@@ -351,18 +359,21 @@ rf_preds = rf.predict(X_test)
 mae_rf = mean_absolute_error(y_test, rf_preds)
 mse_rf = mean_squared_error(y_test, rf_preds)
 rmse_rf = np.sqrt(mse_rf)
+r2_rf = r2_score(y_test, rf_preds)
 
 print("Random Forest Regressor")
 print(f'Mean Absolute Error: {mae_rf:.4f}')
 print(f'Mean Squared Error: {mse_rf:.4f}')
 print(f'Root Mean Squared Error: {rmse_rf:.4f}')
+print(f'R² Score: {r2_rf:.4f}')
 
 models_data = {
     'Model': ['Gradient Boosting', 'Random Forest Regressor', 'Linear Regression', 
               'Neural Network Regressor', 'Decision Tree Regressor'],
     'Mean Absolute Error': [mae_gb, mae_rf, mae_lr, mae_pytorch, mae_dt],
     'Mean Squared Error': [mse_gb, mse_rf, mse_lr, mse_pytorch, mse_dt],
-    'RMSE': [rmse_gb, rmse_rf, rmse_lr, rmse_pytorch, rmse_dt]
+    'RMSE': [rmse_gb, rmse_rf, rmse_lr, rmse_pytorch, rmse_dt],
+    'R²': [r2_gb, r2_rf, r2_lr, r2_pytorch, r2_dt]
 }
 
 models_df = pd.DataFrame(models_data)
@@ -370,15 +381,16 @@ models_df = models_df.sort_values('Mean Squared Error')
 models_df['Mean Absolute Error'] = models_df['Mean Absolute Error'].round(3)
 models_df['Mean Squared Error'] = models_df['Mean Squared Error'].round(3)
 models_df['RMSE'] = models_df['RMSE'].round(3)
+models_df['R²'] = models_df['R²'].round(3)
 
 print("\nModel Comparison:")
 print(models_df)
 
 models_df.to_csv("figure/model_comparison_results.csv", index=False)
 
-plt.figure(figsize=(14, 8))
+plt.figure(figsize=(16, 8))
 
-plt.subplot(1, 3, 1)
+plt.subplot(1, 4, 1)
 bars = plt.bar(models_df['Model'], models_df['Mean Squared Error'])
 plt.xticks(rotation=45, ha='right')
 plt.title('Mean Squared Error by Model (Lower is Better)')
@@ -388,7 +400,7 @@ for bar in bars:
     plt.text(bar.get_x() + bar.get_width()/2., height + 5,
             f'{height:.2f}', ha='center', va='bottom')
     
-plt.subplot(1, 3, 2)
+plt.subplot(1, 4, 2)
 bars = plt.bar(models_df['Model'], models_df['RMSE'])
 plt.xticks(rotation=45, ha='right')
 plt.title('Root Mean Squared Error by Model (Lower is Better)')
@@ -398,7 +410,7 @@ for bar in bars:
     plt.text(bar.get_x() + bar.get_width()/2., height + 0.5,
             f'{height:.2f}', ha='center', va='bottom')
 
-plt.subplot(1, 3, 3)
+plt.subplot(1, 4, 3)
 bars = plt.bar(models_df['Model'], models_df['Mean Absolute Error'])
 plt.xticks(rotation=45, ha='right')
 plt.title('Mean Absolute Error by Model (Lower is Better)')
@@ -408,15 +420,25 @@ for bar in bars:
     plt.text(bar.get_x() + bar.get_width()/2., height + 0.2,
             f'{height:.2f}', ha='center', va='bottom')
 
+plt.subplot(1, 4, 4)
+bars = plt.bar(models_df['Model'], models_df['R²'])
+plt.xticks(rotation=45, ha='right')
+plt.title('R² Score by Model (Higher is Better)')
+plt.ylabel('R²')
+for bar in bars:
+    height = bar.get_height()
+    plt.text(bar.get_x() + bar.get_width()/2., height + 0.01,
+            f'{height:.2f}', ha='center', va='bottom')
+
 plt.tight_layout()
 plt.savefig("figure/Figure_7.png")
 plt.close()
 
 print("\nTable for README.md:")
-print("| Model | Mean Absolute Error | Mean Squared Error | RMSE |")
+print("| Model | Mean Absolute Error | Mean Squared Error | RMSE | R² |")
 print("|-------|---------------------|--------------------|--------------------|---------|")
 for _, row in models_df.iterrows():
-    print(f"| {row['Model']} | {row['Mean Absolute Error']} | {row['Mean Squared Error']} |")
+    print(f"| {row['Model']} | {row['Mean Absolute Error']} | {row['Mean Squared Error']} | {row['RMSE']} | {row['R²']} |")
 
 plt.figure(figsize=(12, 8))
 feature_importance = pd.DataFrame({
