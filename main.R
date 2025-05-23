@@ -424,5 +424,95 @@ qqline(residuals, col = "red")
 
 dev.off()
 
-# Save model comparison results
+# 6. MODEL TESTING
+cat("\n6. MODEL TESTING\n")
+cat("In this section, we will compare the predicted values using 2 models and the real values of the test set.\n")
+
+# Extract a sample of test data points for comparison table
+set.seed(123) # For reproducible sample
+sample_size <- 20
+sample_indices <- sample(1:length(y_test), sample_size)
+
+# Create dataframe with actual and predicted values
+test_comparison <- data.frame(
+  "Real_Values" = round(y_test[sample_indices], 1),
+  "Multiple_Linear_Regression" = round(lm_preds[sample_indices], 1),
+  "Random_Forest_Regression" = round(rf_preds[sample_indices], 1)
+)
+
+# Save comparison to CSV
+write.csv(test_comparison, "figure/visualize/model/model_testing_comparison.csv", row.names = FALSE)
+
+# Create visualization showing model comparisons
+png("figure/visualize/model/model_testing_scatter.png", width = 1200, height = 900)
+par(mfrow = c(2, 2))
+
+# 1. Linear Regression scatter plot
+plot(test_comparison$Real_Values, test_comparison$Multiple_Linear_Regression,
+     xlab = "Real Values", ylab = "Predicted Values",
+     main = "(a) Multiple Linear Regression",
+     pch = 19, col = rgb(0, 0, 1, 0.7),
+     xlim = range(test_comparison$Real_Values),
+     ylim = range(c(test_comparison$Multiple_Linear_Regression, test_comparison$Random_Forest_Regression)))
+abline(0, 1, col = "red", lty = 2)
+
+# 2. Random Forest scatter plot
+plot(test_comparison$Real_Values, test_comparison$Random_Forest_Regression,
+     xlab = "Real Values", ylab = "Predicted Values",
+     main = "(b) Random Forest Regression",
+     pch = 19, col = rgb(0, 0, 1, 0.7),
+     xlim = range(test_comparison$Real_Values),
+     ylim = range(c(test_comparison$Multiple_Linear_Regression, test_comparison$Random_Forest_Regression)))
+abline(0, 1, col = "red", lty = 2)
+
+# 3. Combined plot showing both models
+plot(test_comparison$Real_Values, test_comparison$Multiple_Linear_Regression,
+     xlab = "Real Values", ylab = "Predicted Values",
+     main = "(c) Combination of 2 models",
+     pch = 19, col = rgb(1, 0.3, 0.3, 0.7),
+     xlim = range(test_comparison$Real_Values),
+     ylim = range(c(test_comparison$Multiple_Linear_Regression, test_comparison$Random_Forest_Regression)))
+points(test_comparison$Real_Values, test_comparison$Random_Forest_Regression, 
+       pch = 17, col = rgb(0, 0.7, 0.7, 0.7))
+abline(0, 1, col = "blue", lty = 2)
+
+# Add legend
+legend("topleft", 
+       legend = c("Linear Regression", "Random Forest"),
+       col = c(rgb(1, 0.3, 0.3, 0.7), rgb(0, 0.7, 0.7, 0.7)),
+       pch = c(19, 17),
+       cex = 0.8)
+
+dev.off()
+
+# Feature importance for Random Forest
+if (!is.null(rf_model)) {
+  # Extract variable importance
+  importance_vals <- importance(rf_model)
+  feature_importance <- data.frame(
+    Feature = rownames(importance_vals),
+    Importance = importance_vals[, "%IncMSE"],
+    stringsAsFactors = FALSE
+  )
+  feature_importance <- feature_importance[order(-feature_importance$Importance), ]
+  
+  # Create feature importance plot
+  png("figure/visualize/model/feature_importance.png", width = 1000, height = 800)
+  par(mar = c(5, 10, 4, 2))  # Adjust margins for long feature names
+  barplot(feature_importance$Importance[10:1], 
+          names.arg = feature_importance$Feature[10:1],
+          horiz = TRUE, las = 1, 
+          main = "Top 10 Features by Importance",
+          xlab = "% Increase in MSE")
+  dev.off()
+  
+  # Save feature importance to CSV
+  write.csv(feature_importance, "figure/visualize/model/feature_importance.csv", row.names = FALSE)
+  
+  # Display top 10 features
+  cat("\nTop 10 most important features in Random Forest model:\n")
+  print(head(feature_importance, 10))
+}
+
+# Save model comparison results to CSV
 write.csv(results, "figure/visualize/model/model_comparison_results.csv", row.names = FALSE)
