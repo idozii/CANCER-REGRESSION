@@ -1,0 +1,66 @@
+SUMMARY STATISTICS FOR ALL VARIABLES AFTER PREPROCESSING
+========================================================
+
+  avganncount     avgdeathsperyear target_deathrate incidencerate  
+ Min.   :   6.0   Min.   :  3.00   Min.   :110.4    Min.   :332.0  
+ 1st Qu.:  71.0   1st Qu.: 30.00   1st Qu.:163.8    1st Qu.:418.4  
+ Median : 142.0   Median : 60.00   Median :180.9    Median :452.2  
+ Mean   : 237.9   Mean   : 94.71   Mean   :180.6    Mean   :448.9  
+ 3rd Qu.: 300.5   3rd Qu.:123.00   3rd Qu.:197.4    3rd Qu.:481.8  
+ Max.   :1258.0   Max.   :510.00   Max.   :245.2    Max.   :566.3  
+   medincome        popest2015     povertypercent   studypercap     
+ Min.   : 22640   Min.   :   827   Min.   : 3.20   Min.   :   0.00  
+ 1st Qu.: 38148   1st Qu.: 12386   1st Qu.:12.70   1st Qu.:   0.00  
+ Median : 44026   Median : 25658   Median :16.50   Median :   0.00  
+ Mean   : 45764   Mean   : 47053   Mean   :17.24   Mean   : 130.59  
+ 3rd Qu.: 51294   3rd Qu.: 56484   3rd Qu.:20.80   3rd Qu.:  44.86  
+ Max.   :125635   Max.   :575205   Max.   :47.40   Max.   :9762.31  
+   medianage      medianagemale  medianagefemale percentmarried 
+ Min.   : 22.30   Min.   :22.4   Min.   :22.3    Min.   :23.10  
+ 1st Qu.: 38.10   1st Qu.:36.6   1st Qu.:39.4    1st Qu.:48.10  
+ Median : 41.20   Median :39.8   Median :42.6    Median :52.60  
+ Mean   : 45.95   Mean   :39.7   Mean   :42.3    Mean   :51.88  
+ 3rd Qu.: 44.10   3rd Qu.:42.6   3rd Qu.:45.4    3rd Qu.:56.30  
+ Max.   :624.00   Max.   :64.7   Max.   :65.7    Max.   :72.50  
+  pctnohs18_24     pcths18_24   pctbachdeg18_24   pcths25_over  
+ Min.   : 0.00   Min.   : 7.1   Min.   : 0.000   Min.   : 7.50  
+ 1st Qu.:13.00   1st Qu.:30.2   1st Qu.: 2.900   1st Qu.:31.50  
+ Median :17.60   Median :35.7   Median : 5.000   Median :36.00  
+ Mean   :18.46   Mean   :35.7   Mean   : 5.628   Mean   :35.78  
+ 3rd Qu.:23.10   3rd Qu.:41.1   3rd Qu.: 7.500   3rd Qu.:40.50  
+ Max.   :62.70   Max.   :72.5   Max.   :51.800   Max.   :54.80  
+ pctbachdeg25_over pctemployed16_over pctunemployed16_over pctprivatecoverage
+ Min.   : 2.70     Min.   :17.60      Min.   : 0.400       Min.   :22.30     
+ 1st Qu.: 9.10     1st Qu.:48.30      1st Qu.: 5.700       1st Qu.:56.60     
+ Median :11.60     Median :54.00      Median : 7.700       Median :64.20     
+ Mean   :12.54     Mean   :53.45      Mean   : 7.981       Mean   :63.72     
+ 3rd Qu.:15.00     3rd Qu.:58.90      3rd Qu.: 9.850       3rd Qu.:71.15     
+ Max.   :37.80     Max.   :76.50      Max.   :29.400       Max.   :92.30     
+ pctprivatecoveragealone pctempprivcoverage pctpubliccoverage
+ Min.   :15.70           Min.   :13.50      Min.   :11.80    
+ 1st Qu.:42.30           1st Qu.:34.00      1st Qu.:31.60    
+ Median :48.70           Median :40.30      Median :37.00    
+ Mean   :47.94           Mean   :40.53      Mean   :36.79    
+ 3rd Qu.:52.80           3rd Qu.:46.70      3rd Qu.:42.05    
+ Max.   :78.90           Max.   :70.70      Max.   :65.10    
+ pctpubliccoveragealone    pctwhite         pctblack          pctasian      
+ Min.   : 2.70          Min.   : 10.20   Min.   : 0.0000   Min.   : 0.0000  
+ 1st Qu.:15.30          1st Qu.: 78.07   1st Qu.: 0.6304   1st Qu.: 0.2356  
+ Median :19.20          Median : 90.52   Median : 2.1977   Median : 0.5015  
+ Mean   :19.52          Mean   : 84.03   Mean   : 9.3529   Mean   : 0.8986  
+ 3rd Qu.:23.40          3rd Qu.: 95.58   3rd Qu.:10.8389   3rd Qu.: 0.9796  
+ Max.   :46.60          Max.   :100.00   Max.   :85.9478   Max.   :35.6402  
+  pctotherrace     pctmarriedhouseholds   birthrate      avghouseholdsize
+ Min.   : 0.0000   Min.   :22.99        Min.   : 0.000   Min.   :1.860   
+ 1st Qu.: 0.2737   1st Qu.:47.99        1st Qu.: 4.474   1st Qu.:2.380   
+ Median : 0.7493   Median :51.71        Median : 5.381   Median :2.500   
+ Mean   : 1.7566   Mean   :51.44        Mean   : 5.615   Mean   :2.527   
+ 3rd Qu.: 1.8793   3rd Qu.:55.39        3rd Qu.: 6.528   3rd Qu.:2.630   
+ Max.   :41.9303   Max.   :78.08        Max.   :21.326   Max.   :3.970   
+ income_category
+ Min.   :22640  
+ 1st Qu.:37413  
+ Median :42724  
+ Mean   :42758  
+ 3rd Qu.:51046  
+ Max.   :61494  

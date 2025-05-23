@@ -144,16 +144,53 @@ cat("Final cleaned dataset has", nrow(numeric_df_clean), "observations and", nco
 
 # 4. DESCRIPTIVE STATISTICS AND VISUALIZATIONS (on cleaned data)
 
-# Define key variables for detailed analysis
+# After outlier removal (line ~142)
+# 4. DESCRIPTIVE STATISTICS AND VISUALIZATIONS (on cleaned data)
+
+# Generate and save comprehensive summary of cleaned dataset
+cat("\nDetailed Summary Statistics of Processed Data:\n")
+data_summary <- summary(numeric_df_clean)
+print(data_summary)
+
+# Save full summary statistics to file
+sink("figure/visualize/eda/full_data_summary.txt")
+cat("SUMMARY STATISTICS FOR ALL VARIABLES AFTER PREPROCESSING\n")
+cat("========================================================\n\n")
+print(data_summary)
+sink()
+
+# Generate five-number summary plus mean for key variables
+cat("\nFive-Number Summary for Key Variables:\n")
 key_vars <- c("target_deathrate", "incidencerate", "avganncount", "medincome", 
               "povertypercent", "pctbachdeg25_over", "pctprivatecoverage", "avghouseholdsize")
 
 # Filter to existing variables
 key_vars <- key_vars[key_vars %in% names(numeric_df_clean)]
 
-# Summary statistics for processed data
-cat("\nSummary Statistics for Processed Data:\n")
-print(summary(numeric_df_clean[, key_vars]))
+# Create detailed summary for key variables
+key_summary <- summary(numeric_df_clean[, key_vars])
+print(key_summary)
+
+# Generate additional descriptive statistics for key variables
+desc_stats <- data.frame(
+  Variable = key_vars,
+  Mean = sapply(numeric_df_clean[, key_vars], mean),
+  SD = sapply(numeric_df_clean[, key_vars], sd),
+  CV = sapply(numeric_df_clean[, key_vars], function(x) sd(x)/mean(x)*100),
+  Skewness = sapply(numeric_df_clean[, key_vars], function(x) {
+    m3 <- sum((x - mean(x))^3)/length(x)
+    s3 <- (sum((x - mean(x))^2)/length(x))^(3/2)
+    m3/s3  # Skewness formula
+  }),
+  stringsAsFactors = FALSE
+)
+
+# Display additional statistics
+cat("\nAdditional Descriptive Statistics for Key Variables:\n")
+print(desc_stats, digits = 3)
+
+# Save comprehensive descriptive statistics to CSV
+write.csv(desc_stats, "figure/visualize/eda/key_variables_descriptive_stats.csv", row.names = FALSE)
 
 # TARGET VARIABLE ANALYSIS
 png("figure/visualize/eda/02_target_distribution_clean.png", width = 1200, height = 600)
@@ -258,19 +295,6 @@ for(var in key_vars_no_target[1:6]) {  # Show first 6 variables
 }
 
 dev.off()
-
-# SUMMARY STATISTICS TABLE
-summary_stats_processed <- data.frame(
-  Variable = names(numeric_df_clean),
-  Mean = sapply(numeric_df_clean, mean, na.rm = TRUE),
-  Median = sapply(numeric_df_clean, median, na.rm = TRUE),
-  SD = sapply(numeric_df_clean, sd, na.rm = TRUE),
-  Min = sapply(numeric_df_clean, min, na.rm = TRUE),
-  Max = sapply(numeric_df_clean, max, na.rm = TRUE),
-  stringsAsFactors = FALSE
-)
-
-write.csv(summary_stats_processed, "figure/visualize/eda/processed_data_summary_statistics.csv", row.names = FALSE)
 
 # 5. MODEL BUILDING AND EVALUATION
 # Split features and target
@@ -397,15 +421,6 @@ if (best_model_name == "LinearRegression") {
   y_pred_best <- rf_preds
 }
 
-# Plot actual vs predicted for best model
-png("figure/visualize/model/actual_vs_predicted.png", width = 800, height = 600)
-plot(y_test, y_pred_best, 
-     xlab = "Actual", ylab = "Predicted",
-     main = paste("Actual vs Predicted Values -", best_model_name),
-     pch = 19, col = rgb(0, 0, 1, 0.5))
-abline(a = 0, b = 1, col = "red", lty = 2, lwd = 2)
-dev.off()
-
 # Residual analysis
 residuals <- y_test - y_pred_best
 
@@ -444,37 +459,37 @@ test_comparison <- data.frame(
 # Save comparison to CSV
 write.csv(test_comparison, "figure/visualize/model/model_testing_comparison.csv", row.names = FALSE)
 
-# Create visualization showing model comparisons
-png("figure/visualize/model/model_testing_scatter.png", width = 1200, height = 900)
+# Create visualization showing model comparisons with full test dataset
+png("figure/visualize/model/model_testing_scatter_full.png", width = 1200, height = 900)
 par(mfrow = c(2, 2))
 
-# 1. Linear Regression scatter plot
-plot(test_comparison$Real_Values, test_comparison$Multiple_Linear_Regression,
-     xlab = "Real Values", ylab = "Predicted Values",
+# 1. Linear Regression scatter plot (using full test set)
+plot(y_test, lm_preds,
+     xlab = "Actual Values", ylab = "Predicted Values",
      main = "(a) Multiple Linear Regression",
-     pch = 19, col = rgb(0, 0, 1, 0.7),
-     xlim = range(test_comparison$Real_Values),
-     ylim = range(c(test_comparison$Multiple_Linear_Regression, test_comparison$Random_Forest_Regression)))
+     pch = 19, col = rgb(0, 0, 1, 0.4),
+     xlim = range(y_test),
+     ylim = range(c(lm_preds, rf_preds)))
 abline(0, 1, col = "red", lty = 2)
 
-# 2. Random Forest scatter plot
-plot(test_comparison$Real_Values, test_comparison$Random_Forest_Regression,
-     xlab = "Real Values", ylab = "Predicted Values",
+# 2. Random Forest scatter plot (using full test set)
+plot(y_test, rf_preds,
+     xlab = "Actual Values", ylab = "Predicted Values",
      main = "(b) Random Forest Regression",
-     pch = 19, col = rgb(0, 0, 1, 0.7),
-     xlim = range(test_comparison$Real_Values),
-     ylim = range(c(test_comparison$Multiple_Linear_Regression, test_comparison$Random_Forest_Regression)))
+     pch = 19, col = rgb(0, 0, 1, 0.4),
+     xlim = range(y_test),
+     ylim = range(c(lm_preds, rf_preds)))
 abline(0, 1, col = "red", lty = 2)
 
-# 3. Combined plot showing both models
-plot(test_comparison$Real_Values, test_comparison$Multiple_Linear_Regression,
-     xlab = "Real Values", ylab = "Predicted Values",
+# 3. Combined plot showing both models (using full test set)
+plot(y_test, lm_preds,
+     xlab = "Actual Values", ylab = "Predicted Values",
      main = "(c) Combination of 2 models",
-     pch = 19, col = rgb(1, 0.3, 0.3, 0.7),
-     xlim = range(test_comparison$Real_Values),
-     ylim = range(c(test_comparison$Multiple_Linear_Regression, test_comparison$Random_Forest_Regression)))
-points(test_comparison$Real_Values, test_comparison$Random_Forest_Regression, 
-       pch = 17, col = rgb(0, 0.7, 0.7, 0.7))
+     pch = 19, col = rgb(1, 0.3, 0.3, 0.5),
+     xlim = range(y_test),
+     ylim = range(c(lm_preds, rf_preds)))
+points(y_test, rf_preds, 
+       pch = 17, col = rgb(0, 0.7, 0.7, 0.5))
 abline(0, 1, col = "blue", lty = 2)
 
 # Add legend
@@ -484,30 +499,37 @@ legend("topleft",
        pch = c(19, 17),
        cex = 0.8)
 
+# 4. Error distribution plot (showing residuals for both models)
+residuals_lm <- y_test - lm_preds
+residuals_rf <- y_test - rf_preds
+hist_range <- range(c(residuals_lm, residuals_rf))
+
+# Create overlaid histograms of residuals
+hist(residuals_lm, 
+     xlim = hist_range,
+     col = rgb(1, 0.3, 0.3, 0.5),
+     border = "red",
+     breaks = 20,
+     main = "(d) Error Distribution",
+     xlab = "Residuals (Actual - Predicted)")
+hist(residuals_rf, 
+     add = TRUE, 
+     col = rgb(0, 0.7, 0.7, 0.5),
+     border = "cyan",
+     breaks = 20)
+
+# Add vertical lines for mean errors
+abline(v = mean(residuals_lm), col = "red", lwd = 2, lty = 2)
+abline(v = mean(residuals_rf), col = "cyan", lwd = 2, lty = 2)
+
+# Add legend
+legend("topright", 
+       legend = c("Linear Regression", "Random Forest"),
+       col = c("red", "cyan"),
+       lwd = 2,
+       cex = 0.8)
+
 dev.off()
-
-# Create latex table format
-sink("figure/visualize/model/model_testing_table.txt")
-cat("\\begin{table}[h]\n")
-cat("\\centering\n")
-cat("\\caption{Real Values and Predicted Values of Multiple Linear Regression and Random Forest Regression Models}\n")
-cat("\\begin{tabular}{ccc}\n")
-cat("\\hline\n")
-cat("\\textbf{Real Values} & \\textbf{Multiple Linear Regression} & \\textbf{Random Forest Regression} \\\\\n")
-cat("\\hline\n")
-
-for(i in 1:nrow(test_comparison)) {
-  cat(sprintf("%.1f & %.1f & %.1f \\\\\n", 
-              test_comparison$Real_Values[i], 
-              test_comparison$Multiple_Linear_Regression[i], 
-              test_comparison$Random_Forest_Regression[i]))
-}
-
-cat("\\hline\n")
-cat("\\end{tabular}\n")
-cat("\\label{tab:model-testing}\n")
-cat("\\end{table}\n")
-sink()
 
 # Feature importance for Random Forest
 if (!is.null(rf_model)) {
@@ -545,8 +567,8 @@ write.csv(results, "figure/visualize/model/model_comparison_results.csv", row.na
 cat("\n7. STATISTICAL INFERENCE\n")
 cat("In this section, we will analyze the statistical significance of our models and findings.\n")
 
-# 7.1 Hypothesis Testing for Linear Model
-cat("\n7.1 Hypothesis Testing for Linear Model\n")
+# 7.1 Linear Regression Statistical Analysis
+cat("\n7.1 Linear Regression Statistical Analysis\n")
 lm_summary <- summary(lm_model)
 cat("Linear model summary statistics:\n")
 print(lm_summary)
@@ -612,8 +634,132 @@ legend("bottomright",
 
 dev.off()
 
-# 7.2 ANOVA Analysis
-cat("\n7.2 ANOVA Analysis\n")
+# 7.2 Statistical Hypotheses Testing
+cat("\n7.2 Statistical Hypotheses Testing\n")
+
+# 7.2.1 General Principles of Statistical Hypothesis Testing
+cat("\n7.2.1 General Principles of Statistical Hypothesis Testing\n")
+
+# Define function to test hypotheses about relationships between variables and cancer mortality
+cat("Testing key hypotheses about factors affecting cancer mortality rates:\n")
+
+# Function to perform hypothesis test for a single variable
+test_hypothesis <- function(variable, data, alpha = 0.05) {
+  # Create formula
+  formula <- as.formula(paste("target_deathrate ~", variable))
+  
+  # Fit simple linear model
+  model <- lm(formula, data = data)
+  
+  # Get model summary
+  summary_stats <- summary(model)
+  
+  # Extract p-value for variable coefficient
+  p_value <- summary_stats$coefficients[2, 4]
+  
+  # Extract coefficient
+  coefficient <- summary_stats$coefficients[2, 1]
+  
+  # Extract R-squared
+  r_squared <- summary_stats$r.squared
+  
+  # Get direction of effect
+  direction <- ifelse(coefficient > 0, "positive", "negative")
+  
+  # Test significance
+  significant <- p_value < alpha
+  
+  # Create results
+  result <- list(
+    variable = variable,
+    null_hypothesis = paste0("H0: There is no relationship between ", variable, " and cancer mortality rate"),
+    alt_hypothesis = paste0("H1: There is a relationship between ", variable, " and cancer mortality rate"),
+    coefficient = coefficient,
+    direction = direction,
+    p_value = p_value,
+    r_squared = r_squared,
+    significant = significant,
+    conclusion = ifelse(significant, 
+                       paste0("Reject H0: ", variable, " has a statistically significant ", direction, 
+                              " relationship with cancer mortality (p = ", sprintf("%.4f", p_value), ")"),
+                       paste0("Fail to reject H0: No statistically significant relationship between ", 
+                              variable, " and cancer mortality (p = ", sprintf("%.4f", p_value), ")"))
+  )
+  
+  return(result)
+}
+
+# Select key variables to test
+key_test_variables <- c("incidencerate", "medincome", "povertypercent", 
+                      "pctbachdeg25_over", "pctprivatecoverage", "pctpubliccoverage", 
+                      "pctunemployed16_over", "pctwhite", "pctblack")
+
+# Test each hypothesis
+hypothesis_results <- list()
+for (var in key_test_variables) {
+  if (var %in% colnames(numeric_df_clean)) {
+    cat("\nTesting hypothesis for variable:", var, "\n")
+    result <- test_hypothesis(var, numeric_df_clean)
+    hypothesis_results[[var]] <- result
+    cat(result$conclusion, "\n")
+  }
+}
+
+# Convert hypothesis results to dataframe for visualization
+hyp_df <- data.frame(
+  Variable = sapply(hypothesis_results, function(x) x$variable),
+  P_Value = sapply(hypothesis_results, function(x) x$p_value),
+  Coefficient = sapply(hypothesis_results, function(x) x$coefficient),
+  Direction = sapply(hypothesis_results, function(x) x$direction),
+  R_Squared = sapply(hypothesis_results, function(x) x$r_squared),
+  Significant = sapply(hypothesis_results, function(x) x$significant),
+  stringsAsFactors = FALSE
+)
+
+# Sort by significance
+hyp_df <- hyp_df[order(hyp_df$P_Value), ]
+
+# Save results to file
+write.csv(hyp_df, "figure/visualize/inference/hypothesis_tests.csv", row.names = FALSE)
+
+# Create visualization of hypothesis test results
+png("figure/visualize/inference/hypothesis_tests_visualization.png", width = 1000, height = 800)
+par(mfrow = c(1, 2))
+
+# 1. P-values plot
+par(mar = c(10, 4, 4, 2))
+barplot(-log10(hyp_df$P_Value),
+        names.arg = hyp_df$Variable,
+        col = ifelse(hyp_df$Significant, "darkgreen", "gray70"),
+        main = "Statistical Significance of Variables",
+        ylab = "-log10(p-value)",
+        las = 2)
+abline(h = -log10(0.05), col = "red", lty = 2, lwd = 2)
+text(x = 0.5, y = -log10(0.05) + 0.3, labels = "Significance threshold (p = 0.05)", col = "red", pos = 4)
+
+# 2. R-squared plot
+par(mar = c(10, 4, 4, 2))
+barplot(hyp_df$R_Squared,
+        names.arg = hyp_df$Variable,
+        col = ifelse(hyp_df$Direction == "positive", "steelblue", "firebrick"),
+        main = "Explained Variance by Variable",
+        ylab = "R²",
+        las = 2)
+
+# Add direction indicators
+for(i in 1:nrow(hyp_df)) {
+  text(x = i - 0.5, 
+       y = hyp_df$R_Squared[i] + max(hyp_df$R_Squared) * 0.05,
+       labels = ifelse(hyp_df$Direction[i] == "positive", "+", "-"),
+       col = ifelse(hyp_df$Direction[i] == "positive", "darkblue", "darkred"),
+       cex = 1.5,
+       font = 2)
+}
+
+dev.off()
+
+# 7.3 ANOVA Analysis - Comparing Models
+cat("\n7.3 Comparing Models with Analysis of Variance (ANOVA)\n")
 
 # Create reduced model with top predictors
 if (nrow(lm_significant) >= 5) {
@@ -633,35 +779,98 @@ if (nrow(lm_significant) >= 5) {
   cat("\nANOVA Comparison of Reduced vs Full Model:\n")
   print(anova_result)
   
+  # Interpret ANOVA result
+  is_full_better <- anova_result[2, "Pr(>F)"] < 0.05
+  anova_conclusion <- ifelse(is_full_better,
+                            "The full model significantly improves fit compared to the reduced model",
+                            "The reduced model is not significantly different from the full model")
+  cat("\nANOVA Conclusion:", anova_conclusion, "\n")
+  
   # Save ANOVA results
   capture.output(anova_result, file = "figure/visualize/inference/anova_results.txt")
+  
+  # Save ANOVA conclusion
+  writeLines(anova_conclusion, "figure/visualize/inference/anova_conclusion.txt")
   
   # Create visual comparison of models
   png("figure/visualize/inference/model_comparison_r2.png", width = 800, height = 600)
   
   # Get R-squared values
   reduced_r2 <- summary(reduced_model)$r.squared
+  reduced_adj_r2 <- summary(reduced_model)$adj.r.squared
   full_r2 <- summary(lm_model)$r.squared
+  full_adj_r2 <- summary(lm_model)$adj.r.squared
   
-  # Create barplot
-  barplot(c(reduced_r2, full_r2),
-          names.arg = c("Reduced Model\n(Top 5 Predictors)", "Full Model"),
-          col = c("orange", "steelblue"),
-          main = "Model Comparison: Explained Variance (R²)",
-          ylab = "R-squared",
-          ylim = c(0, max(reduced_r2, full_r2) * 1.1))
+  # Create barplot comparing R² and adjusted R²
+  bar_heights <- c(reduced_r2, reduced_adj_r2, full_r2, full_adj_r2)
+  bar_colors <- c("orange", "darkorange", "steelblue", "darkblue")
+  bar_names <- c("Reduced Model\nR²", "Reduced Model\nAdj. R²", 
+                "Full Model\nR²", "Full Model\nAdj. R²")
+  
+  barplot(bar_heights,
+          names.arg = bar_names,
+          col = bar_colors,
+          main = "Model Comparison: Explained Variance",
+          ylab = "R-squared / Adjusted R-squared",
+          ylim = c(0, max(bar_heights) * 1.1))
   
   # Add text labels
-  text(x = c(0.7, 1.9),
-       y = c(reduced_r2, full_r2) * 1.02,
-       labels = sprintf("R² = %.3f", c(reduced_r2, full_r2)),
+  text(x = c(0.7, 1.9, 3.1, 4.3),
+       y = bar_heights * 1.02,
+       labels = sprintf("%.3f", bar_heights),
        cex = 1.2)
+  
+  # Add significance indicator if applicable
+  if (is_full_better) {
+    text(x = 3.6, y = max(bar_heights) * 1.05,
+         labels = "Significantly better (p < 0.05)",
+         cex = 0.9, col = "darkblue")
+  }
+  
+  dev.off()
+  
+  # Create F-test visualization
+  png("figure/visualize/inference/f_test_visualization.png", width = 800, height = 600)
+  
+  # Get F-statistic and degrees of freedom
+  f_statistic <- anova_result[2, "F"]
+  df1 <- anova_result[2, "Df"]
+  df2 <- anova_result[2, "Res.Df"][2]
+  
+  # Create a sequence for the F distribution
+  x <- seq(0, qf(0.999, df1, df2), length.out = 1000)
+  y <- df(x, df1, df2)
+  
+  # Plot the F distribution
+  plot(x, y, type = "l", lwd = 2, col = "blue",
+       main = "F-Test Visualization for Model Comparison",
+       xlab = "F-statistic",
+       ylab = "Density")
+  
+  # Add critical F value
+  f_crit <- qf(0.95, df1, df2)
+  abline(v = f_crit, col = "red", lty = 2, lwd = 2)
+  text(f_crit + 1, max(y) * 0.8, "Critical F", col = "red", pos = 4)
+  
+  # Add observed F value
+  abline(v = f_statistic, col = "green", lwd = 2)
+  text(f_statistic, max(y) * 0.6, 
+       sprintf("Observed F = %.2f", f_statistic), 
+       col = "green", pos = ifelse(f_statistic > f_crit, 4, 2))
+  
+  # Shade the rejection region
+  rejection_x <- x[x > f_crit]
+  rejection_y <- df(rejection_x, df1, df2)
+  polygon(c(f_crit, rejection_x, max(rejection_x)), 
+          c(0, rejection_y, 0), 
+          col = rgb(1, 0, 0, 0.2))
+  text(max(x) * 0.8, max(y) * 0.4, "Rejection\nregion", col = "darkred")
   
   dev.off()
 }
 
-# 7.3 Confidence Intervals Analysis
-cat("\n7.3 Confidence Intervals Analysis\n")
+# 7.4 Confidence Intervals Analysis
+cat("\n7.4 Confidence Intervals Analysis\n")
 
 # Calculate confidence intervals for linear model coefficients
 ci <- confint(lm_model, level = 0.95)
@@ -726,8 +935,8 @@ legend("bottomright",
 
 dev.off()
 
-# 7.4 Model Validation Analysis - Residual Diagnostics
-cat("\n7.4 Model Validation Analysis - Residual Diagnostics\n")
+# 7.5 Model Validation Analysis - Residual Diagnostics
+cat("\n7.5 Model Validation Analysis - Residual Diagnostics\n")
 
 # Comprehensive residual analysis for linear model
 png("figure/visualize/inference/lm_residual_diagnostics.png", width = 1200, height = 900)
@@ -761,8 +970,8 @@ if(require("lmtest")) {
   cat("\nPackage 'lmtest' not available. Skipping Breusch-Pagan test.\n")
 }
 
-# 7.5 Prediction Interval Analysis for Linear Model
-cat("\n7.5 Prediction Interval Analysis\n")
+# 7.6 Prediction Interval Analysis for Linear Model
+cat("\n7.6 Prediction Interval Analysis\n")
 
 # Create prediction intervals for a sample of test cases
 set.seed(456)
@@ -825,7 +1034,3 @@ mtext(sprintf("Coverage: %.1f%% of actual values fall within 95%% prediction int
       side = 3, line = -2, cex = 0.8)
 
 dev.off()
-
-cat("\nStatistical inference analysis complete. Results saved to figure/visualize/inference/ directory.\n")
-
-cat("\nAnalysis complete! All results saved to figure/visualize/ directory.\n")
