@@ -8,6 +8,7 @@ library(stringr)
 # Create directories for outputs
 dir.create("figure/visualize/eda", recursive = TRUE, showWarnings = FALSE)
 dir.create("figure/visualize/model", recursive = TRUE, showWarnings = FALSE)
+dir.create("figure/visualize/inference", recursive = TRUE, showWarnings = FALSE)
 
 # Load data
 cancer_regData <- read.csv('data/cancer_reg.csv')
@@ -485,6 +486,29 @@ legend("topleft",
 
 dev.off()
 
+# Create latex table format
+sink("figure/visualize/model/model_testing_table.txt")
+cat("\\begin{table}[h]\n")
+cat("\\centering\n")
+cat("\\caption{Real Values and Predicted Values of Multiple Linear Regression and Random Forest Regression Models}\n")
+cat("\\begin{tabular}{ccc}\n")
+cat("\\hline\n")
+cat("\\textbf{Real Values} & \\textbf{Multiple Linear Regression} & \\textbf{Random Forest Regression} \\\\\n")
+cat("\\hline\n")
+
+for(i in 1:nrow(test_comparison)) {
+  cat(sprintf("%.1f & %.1f & %.1f \\\\\n", 
+              test_comparison$Real_Values[i], 
+              test_comparison$Multiple_Linear_Regression[i], 
+              test_comparison$Random_Forest_Regression[i]))
+}
+
+cat("\\hline\n")
+cat("\\end{tabular}\n")
+cat("\\label{tab:model-testing}\n")
+cat("\\end{table}\n")
+sink()
+
 # Feature importance for Random Forest
 if (!is.null(rf_model)) {
   # Extract variable importance
@@ -516,3 +540,292 @@ if (!is.null(rf_model)) {
 
 # Save model comparison results to CSV
 write.csv(results, "figure/visualize/model/model_comparison_results.csv", row.names = FALSE)
+
+# 7. STATISTICAL INFERENCE
+cat("\n7. STATISTICAL INFERENCE\n")
+cat("In this section, we will analyze the statistical significance of our models and findings.\n")
+
+# 7.1 Hypothesis Testing for Linear Model
+cat("\n7.1 Hypothesis Testing for Linear Model\n")
+lm_summary <- summary(lm_model)
+cat("Linear model summary statistics:\n")
+print(lm_summary)
+
+# Extract significant predictors
+lm_coefs <- as.data.frame(lm_summary$coefficients)
+lm_coefs$Variable <- rownames(lm_coefs)
+colnames(lm_coefs)[1:4] <- c("Estimate", "Std_Error", "t_value", "p_value")
+lm_coefs$Significant <- ifelse(lm_coefs$p_value < 0.05, "Yes", "No")
+
+# Sort by significance and absolute effect size
+lm_coefs <- lm_coefs[order(lm_coefs$p_value, -abs(lm_coefs$Estimate)),]
+
+# Get significant predictors
+lm_significant <- lm_coefs[lm_coefs$p_value < 0.05, ]
+
+# Save to CSV
+write.csv(lm_coefs, "figure/visualize/inference/lm_coefficients.csv", row.names = FALSE)
+
+# Create visualization of most significant coefficients
+png("figure/visualize/inference/significant_predictors.png", width = 1000, height = 800)
+par(mar = c(5, 12, 4, 2))  # Increase margin for variable names
+
+# Select top 15 significant predictors by p-value
+top_n <- min(15, nrow(lm_significant))
+top_vars <- lm_significant[1:top_n, ]
+
+# Create horizontal barplot
+barplot(top_vars$Estimate, 
+        names.arg = top_vars$Variable,
+        horiz = TRUE, 
+        las = 1,  # Make labels horizontal
+        col = ifelse(top_vars$Estimate > 0, "steelblue", "firebrick"),
+        main = "Significant Predictors of Cancer Mortality (p < 0.05)",
+        xlab = "Standardized Coefficient",
+        xlim = c(min(top_vars$Estimate) * 1.2, max(top_vars$Estimate) * 1.2))
+
+# Add reference line at zero
+abline(v = 0, col = "black", lty = 2)
+
+# Add significance markers
+sig_markers <- ifelse(top_vars$p_value < 0.001, "***", 
+                     ifelse(top_vars$p_value < 0.01, "**", 
+                           ifelse(top_vars$p_value < 0.05, "*", "")))
+
+# Add the markers to the plot
+text(x = ifelse(top_vars$Estimate > 0, 
+               top_vars$Estimate + max(abs(top_vars$Estimate)) * 0.05, 
+               top_vars$Estimate - max(abs(top_vars$Estimate)) * 0.05),
+     y = seq(0.7, length(top_vars$Estimate) * 1.2 - 0.5, by = 1.2),
+     labels = sig_markers,
+     col = "black",
+     cex = 1.2)
+
+# Add legend
+legend("bottomright", 
+       legend = c("Positive effect", "Negative effect", "*** p<0.001", "** p<0.01", "* p<0.05"),
+       fill = c("steelblue", "firebrick", NA, NA, NA),
+       border = c("black", "black", NA, NA, NA),
+       pch = c(NA, NA, "*", "*", "*"),
+       col = c(NA, NA, "black", "black", "black"),
+       cex = 0.8)
+
+dev.off()
+
+# 7.2 ANOVA Analysis
+cat("\n7.2 ANOVA Analysis\n")
+
+# Create reduced model with top predictors
+if (nrow(lm_significant) >= 5) {
+  # Select top 5 significant predictors
+  top5_vars <- lm_significant$Variable[1:5]
+  top5_vars <- top5_vars[top5_vars != "(Intercept)"]
+  
+  # Create formula for reduced model
+  reduced_formula <- paste("y_train ~", paste(top5_vars, collapse = " + "))
+  cat("Reduced model formula:", reduced_formula, "\n")
+  
+  # Fit reduced model
+  reduced_model <- lm(as.formula(reduced_formula), data = X_train_scaled)
+  
+  # Compare models with ANOVA
+  anova_result <- anova(reduced_model, lm_model)
+  cat("\nANOVA Comparison of Reduced vs Full Model:\n")
+  print(anova_result)
+  
+  # Save ANOVA results
+  capture.output(anova_result, file = "figure/visualize/inference/anova_results.txt")
+  
+  # Create visual comparison of models
+  png("figure/visualize/inference/model_comparison_r2.png", width = 800, height = 600)
+  
+  # Get R-squared values
+  reduced_r2 <- summary(reduced_model)$r.squared
+  full_r2 <- summary(lm_model)$r.squared
+  
+  # Create barplot
+  barplot(c(reduced_r2, full_r2),
+          names.arg = c("Reduced Model\n(Top 5 Predictors)", "Full Model"),
+          col = c("orange", "steelblue"),
+          main = "Model Comparison: Explained Variance (R²)",
+          ylab = "R-squared",
+          ylim = c(0, max(reduced_r2, full_r2) * 1.1))
+  
+  # Add text labels
+  text(x = c(0.7, 1.9),
+       y = c(reduced_r2, full_r2) * 1.02,
+       labels = sprintf("R² = %.3f", c(reduced_r2, full_r2)),
+       cex = 1.2)
+  
+  dev.off()
+}
+
+# 7.3 Confidence Intervals Analysis
+cat("\n7.3 Confidence Intervals Analysis\n")
+
+# Calculate confidence intervals for linear model coefficients
+ci <- confint(lm_model, level = 0.95)
+ci_df <- as.data.frame(ci)
+ci_df$Variable <- rownames(ci)
+colnames(ci_df)[1:2] <- c("Lower_CI", "Upper_CI")
+
+# Merge with coefficients
+ci_results <- merge(lm_coefs, ci_df, by = "Variable")
+
+# Sort by significance and effect size
+ci_results <- ci_results[order(ci_results$p_value, -abs(ci_results$Estimate)),]
+
+# Save confidence intervals
+write.csv(ci_results, "figure/visualize/inference/confidence_intervals.csv", row.names = FALSE)
+
+# Plot confidence intervals for top predictors
+png("figure/visualize/inference/confidence_intervals.png", width = 1000, height = 800)
+par(mar = c(5, 10, 4, 2))  # Adjust margins for variable names
+
+# Select top 10 coefficients by significance
+ci_top <- head(ci_results, 10)
+
+# Create empty plot with appropriate dimensions
+plot(NA, NA, 
+     xlim = c(min(ci_top$Lower_CI) * 1.1, max(ci_top$Upper_CI) * 1.1),
+     ylim = c(0.5, nrow(ci_top) + 0.5),
+     xlab = "Standardized Coefficient with 95% Confidence Interval",
+     ylab = "",
+     yaxt = "n",
+     main = "Top Predictors of Cancer Mortality with 95% Confidence Intervals")
+
+# Add grid lines for reference
+abline(v = 0, lty = 2, col = "darkgray")
+grid(nx = NULL, ny = NA, col = "lightgray", lty = "dotted")
+
+# Add points and lines for each coefficient
+for (i in 1:nrow(ci_top)) {
+  # Plot the estimate point
+  points(ci_top$Estimate[i], nrow(ci_top) - i + 1, 
+         pch = 19, 
+         col = ifelse(ci_top$p_value[i] < 0.05, "blue", "red"),
+         cex = 1.2)
+  
+  # Plot the confidence interval line
+  lines(c(ci_top$Lower_CI[i], ci_top$Upper_CI[i]), 
+        c(nrow(ci_top) - i + 1, nrow(ci_top) - i + 1),
+        col = ifelse(ci_top$p_value[i] < 0.05, "blue", "red"),
+        lwd = 2)
+}
+
+# Add variable names as y-axis labels
+axis(2, at = nrow(ci_top):1, labels = ci_top$Variable, las = 2, cex.axis = 0.8)
+
+# Add legend
+legend("bottomright", 
+       legend = c("Significant (p < 0.05)", "Not significant"),
+       col = c("blue", "red"),
+       lwd = 2, 
+       pch = 19,
+       cex = 0.8)
+
+dev.off()
+
+# 7.4 Model Validation Analysis - Residual Diagnostics
+cat("\n7.4 Model Validation Analysis - Residual Diagnostics\n")
+
+# Comprehensive residual analysis for linear model
+png("figure/visualize/inference/lm_residual_diagnostics.png", width = 1200, height = 900)
+par(mfrow = c(2, 2))
+
+# 1. Residuals vs Fitted
+plot(lm_model, which = 1, main = "Residuals vs Fitted Values")
+
+# 2. Normal Q-Q plot
+plot(lm_model, which = 2, main = "Normal Q-Q Plot of Residuals")
+
+# 3. Scale-Location (spread-location)
+plot(lm_model, which = 3, main = "Scale-Location Plot")
+
+# 4. Residuals vs Leverage
+plot(lm_model, which = 5, main = "Residuals vs Leverage")
+
+dev.off()
+
+# Shapiro-Wilk test for normality of residuals
+shapiro_test <- shapiro.test(residuals(lm_model))
+cat("\nShapiro-Wilk normality test for linear model residuals:\n")
+print(shapiro_test)
+
+# Breusch-Pagan test for heteroscedasticity
+if(require("lmtest")) {
+  bp_test <- lmtest::bptest(lm_model)
+  cat("\nBreusch-Pagan test for heteroscedasticity:\n")
+  print(bp_test)
+} else {
+  cat("\nPackage 'lmtest' not available. Skipping Breusch-Pagan test.\n")
+}
+
+# 7.5 Prediction Interval Analysis for Linear Model
+cat("\n7.5 Prediction Interval Analysis\n")
+
+# Create prediction intervals for a sample of test cases
+set.seed(456)
+sample_idx_pi <- sample(1:nrow(X_test_scaled), min(10, nrow(X_test_scaled)))
+
+# Generate predictions with intervals
+pred_interval <- predict(lm_model, X_test_scaled[sample_idx_pi,], interval = "prediction", level = 0.95)
+
+# Create data frame with actual values, predictions, and intervals
+pi_df <- data.frame(
+  Actual = y_test[sample_idx_pi],
+  Predicted = pred_interval[, "fit"],
+  Lower_PI = pred_interval[, "lwr"],
+  Upper_PI = pred_interval[, "upr"]
+)
+
+# Calculate interval width and whether actual falls within interval
+pi_df$PI_Width <- pi_df$Upper_PI - pi_df$Lower_PI
+pi_df$Within_PI <- pi_df$Actual >= pi_df$Lower_PI & pi_df$Actual <= pi_df$Upper_PI
+pi_coverage <- mean(pi_df$Within_PI) * 100
+
+# Save results
+write.csv(pi_df, "figure/visualize/inference/prediction_intervals.csv", row.names = FALSE)
+
+# Visualize prediction intervals
+png("figure/visualize/inference/prediction_intervals.png", width = 1000, height = 600)
+
+# Sort by predicted value for cleaner plot
+pi_df <- pi_df[order(pi_df$Predicted),]
+
+# Plot
+plot(1:nrow(pi_df), pi_df$Predicted, 
+     type = "o", pch = 19, col = "blue",
+     ylim = c(min(pi_df$Lower_PI) * 0.9, max(pi_df$Upper_PI) * 1.05),
+     xlab = "Sample Index", ylab = "Cancer Death Rate",
+     main = "95% Prediction Intervals for Cancer Mortality Rate",
+     xaxt = "n")
+
+# Add x-axis labels
+axis(1, at = 1:nrow(pi_df), labels = 1:nrow(pi_df))
+
+# Add prediction intervals
+for(i in 1:nrow(pi_df)) {
+  lines(c(i, i), c(pi_df$Lower_PI[i], pi_df$Upper_PI[i]), col = "lightblue", lwd = 10, lend = 1)
+}
+
+# Add actual values
+points(1:nrow(pi_df), pi_df$Actual, pch = 17, col = "red", cex = 1.2)
+
+# Add legend
+legend("topleft", 
+       legend = c("Predicted Value", "Actual Value", "95% Prediction Interval"),
+       col = c("blue", "red", "lightblue"),
+       pch = c(19, 17, NA),
+       lwd = c(1, 1, 10),
+       cex = 0.8)
+
+# Add coverage information
+mtext(sprintf("Coverage: %.1f%% of actual values fall within 95%% prediction intervals", pi_coverage),
+      side = 3, line = -2, cex = 0.8)
+
+dev.off()
+
+cat("\nStatistical inference analysis complete. Results saved to figure/visualize/inference/ directory.\n")
+
+cat("\nAnalysis complete! All results saved to figure/visualize/ directory.\n")

@@ -1,0 +1,16 @@
+Analysis of Variance Table
+
+Model 1: y_train ~ incidencerate + avgdeathsperyear + avganncount + income_category
+Model 2: y_train ~ avganncount + avgdeathsperyear + incidencerate + medincome + 
+    popest2015 + povertypercent + studypercap + medianage + medianagemale + 
+    medianagefemale + percentmarried + pctnohs18_24 + pcths18_24 + 
+    pctbachdeg18_24 + pcths25_over + pctbachdeg25_over + pctemployed16_over + 
+    pctunemployed16_over + pctprivatecoverage + pctprivatecoveragealone + 
+    pctempprivcoverage + pctpubliccoverage + pctpubliccoveragealone + 
+    pctwhite + pctblack + pctasian + pctotherrace + pctmarriedhouseholds + 
+    birthrate + avghouseholdsize + income_category
+  Res.Df    RSS Df Sum of Sq     F    Pr(>F)    
+1   1716 506341                                 
+2   1689 427017 27     79324 11.62 < 2.2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
