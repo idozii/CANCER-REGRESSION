@@ -75,17 +75,10 @@ key_vars <- c(selected_features, "target_deathrate")
 
 numeric_df_clean <- numeric_df[, key_vars]
 
+summary(numeric_df_clean)
 png("figure/visualize/eda/correlation_matrix_clean.png", width = 1000, height = 1000)
 key_numeric <- numeric_df_clean[, key_vars]
-corrplot(cor(key_numeric, use = "pairwise.complete.obs"),
-         method = "color",
-         type = "upper",
-         tl.cex = 0.8,
-         tl.col = "black",
-         tl.srt = 45,
-         addCoef.col = "black",
-         order = "hclust",
-         title = "Correlation Matrix of Key Variables (Clean Data)")
+corrplot(cor(key_numeric, use = "pairwise.complete.obs"), method = "color", type = "upper", tl.cex = 0.8, tl.col = "black", tl.srt = 45, addCoef.col = "black", order = "hclust")
 dev.off()
 
 for (var in key_vars) {
