@@ -1,1 +1,0 @@
-The full model significantly improves fit compared to the reduced model
