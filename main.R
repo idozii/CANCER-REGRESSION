@@ -110,7 +110,7 @@ for (var in key_vars) {
 }
 
 # 5. MODEL BUILDING AND EVALUATION
-set.seed(225) # For reproducibility
+set.seed(225)
 train_index <- createDataPartition(numeric_df_clean$target_deathrate, p = 0.8, list = FALSE)
 train_data <- numeric_df_clean[train_index, ]
 test_data <- numeric_df_clean[-train_index, ]
@@ -120,31 +120,6 @@ y_train <- train_data$target_deathrate
 X_test <- test_data[, selected_features]
 y_test <- test_data$target_deathrate
 
-# Handle any potential NA values in training and test data
-cat("\nChecking for NA values in features:\n")
-na_count_X_train <- sum(is.na(X_train))
-na_count_X_test <- sum(is.na(X_test))
-cat("NA values in training features:", na_count_X_train, "\n")
-cat("NA values in test features:", na_count_X_test, "\n")
-
-# If any NAs exist, impute them
-if(na_count_X_train > 0 || na_count_X_test > 0) {
-  for(col in names(X_train)) {
-    if(sum(is.na(X_train[[col]])) > 0) {
-      col_median <- median(X_train[[col]], na.rm = TRUE)
-      X_train[[col]][is.na(X_train[[col]])] <- col_median
-      cat("Imputing NA values in training column", col, "\n")
-    }
-    
-    if(sum(is.na(X_test[[col]])) > 0) {
-      # Use training set median for test set to prevent data leakage
-      col_median <- median(X_train[[col]], na.rm = TRUE)
-      X_test[[col]][is.na(X_test[[col]])] <- col_median
-      cat("Imputing NA values in test column", col, "\n")
-    }
-  }
-}
-
 lm_model <- lm(y_train ~ ., data = X_train)
 lm_preds <- predict(lm_model, X_test)
 lm_mse <- mean((y_test - lm_preds)^2)
@@ -152,7 +127,6 @@ lm_r2 <- cor(y_test, lm_preds)^2
 lm_mae <- mean(abs(y_test - lm_preds))
 print(summary(lm_model))
 
-set.seed(42)
 rf_model <- randomForest(x = X_train, y = y_train, 
                         ntree = 200, 
                         importance = TRUE)
@@ -161,9 +135,6 @@ rf_mse <- mean((y_test - rf_preds)^2)
 rf_r2 <- cor(y_test, rf_preds)^2
 rf_mae <- mean(abs(y_test - rf_preds))
 
-# Model comparison results
-cat("\nModel Comparison:\n")
-cat("------------------------------------------------------------\n")
 cat(sprintf("Multiple Linear Regression - MSE: %.2f, R²: %.4f, MAE: %.2f\n", lm_mse, lm_r2, lm_mae))
 cat(sprintf("Random Forest          - MSE: %.2f, R²: %.4f, MAE: %.2f\n", rf_mse, rf_r2, rf_mae))
 
@@ -174,9 +145,9 @@ png("figure/visualize/model/optimized_diagnostics.png", width = 1200, height = 6
 par(mfrow = c(1, 2))
 
 # Residuals vs predicted
-plot(y_pred_best, residuals,
+plot(lm_preds, residuals,
      xlab = "Predicted Values", ylab = "Residuals",
-     main = paste("Residuals vs Predicted Values -", best_model_name),
+     main = paste("Residuals vs Predicted Values -", deparse(substitute(lm_model))),
      pch = 19, col = rgb(0, 0, 1, 0.5))
 abline(h = 0, col = "red", lty = 1)
 
@@ -187,7 +158,7 @@ qqline(residuals, col = "red")
 dev.off()
 
 # 6. MODEL TESTING
-set.seed(225) # For reproducible sample
+set.seed(225) 
 sample_size <- min(20, length(y_test))
 sample_indices <- sample(1:length(y_test), sample_size)
 
