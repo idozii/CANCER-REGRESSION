@@ -103,7 +103,7 @@ for (var in key_vars) {
 }
 
 # 5. MODEL BUILDING AND EVALUATION
-set.seed(225)
+set.seed(2025)
 train_index <- createDataPartition(numeric_df_clean$target_deathrate, p = 0.8, list = FALSE)
 train_data <- numeric_df_clean[train_index, ]
 test_data <- numeric_df_clean[-train_index, ]
@@ -113,16 +113,14 @@ y_train <- train_data$target_deathrate
 X_test <- test_data[, selected_features]
 y_test <- test_data$target_deathrate
 
-lm_model <- lm(y_train ~ ., data = X_train)
+lm_model <- lm(target_deathrate ~ ., data = train_data)
 lm_preds <- predict(lm_model, X_test)
 lm_mse <- mean((y_test - lm_preds)^2)
 lm_r2 <- cor(y_test, lm_preds)^2
 lm_mae <- mean(abs(y_test - lm_preds))
 print(summary(lm_model))
 
-rf_model <- randomForest(x = X_train, y = y_train, 
-                        ntree = 200, 
-                        importance = TRUE)
+rf_model <- randomForest(x = X_train, y = y_train, ntree = 200, importance = TRUE)
 rf_preds <- predict(rf_model, X_test)
 rf_mse <- mean((y_test - rf_preds)^2)
 rf_r2 <- cor(y_test, rf_preds)^2
@@ -137,21 +135,13 @@ residuals <- y_test - lm_preds
 png("figure/visualize/model/optimized_diagnostics.png", width = 1200, height = 600)
 par(mfrow = c(1, 2))
 
-# Residuals vs predicted
-plot(lm_preds, residuals,
-     xlab = "Predicted Values", ylab = "Residuals",
-     main = paste("Residuals vs Predicted Values -", deparse(substitute(lm_model))),
-     pch = 19, col = rgb(0, 0, 1, 0.5))
-abline(h = 0, col = "red", lty = 1)
-
-# Normal Q-Q plot
 qqnorm(residuals, main = "Normal Q-Q Plot")
 qqline(residuals, col = "red")
 
 dev.off()
 
 # 6. MODEL TESTING
-set.seed(225) 
+set.seed(2025) 
 sample_size <- min(20, length(y_test))
 sample_indices <- sample(1:length(y_test), sample_size)
 
