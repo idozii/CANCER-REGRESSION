@@ -74,6 +74,12 @@ if ('binnedinc' %in% names(cancer_regData)) {
   )
 }
 
+#Convert geography to state and encode
+if ('geography' %in% names(cancer_regData)) {
+  numeric_df$state <- as.numeric(factor(cancer_regData$geography, 
+                                        levels = unique(cancer_regData$geography)))
+}
+
 cor_matrix <- cor(numeric_df, use = "pairwise.complete.obs")
 target_correlations <- cor_matrix[, "target_deathrate"]
 top_features <- sort(abs(target_correlations), decreasing = TRUE)[2:7]
@@ -172,6 +178,41 @@ if (z_statistic < z_alpha) {
   cat("There is insufficient evidence to support the claim that the average cancer mortality rate in counties with lower poverty is significantly less than in counties with higher poverty.\n")
 }
 
+# ANOVA for state differences in target death rate
+anova_df <- data.frame(
+  state = numeric_df$state,
+  mortality_rate = numeric_df$target_deathrate
+)
+anova_model <- aov(mortality_rate ~ state, data = anova_df)
+anova_summary <- summary(anova_model)
+
+ss_treatment <- anova_summary[[1]]$`Sum Sq`[1]
+ss_error <- anova_summary[[1]]$`Sum Sq`[2]
+df_treatment <- summary(anova_model)[[1]]$Df[1]
+df_error <- anova_summary[[1]]$Df[2]
+
+ms_treatment <- ss_treatment / df_treatment
+ms_error <- ss_error / df_error
+
+f_statistic <- anova_summary[[1]]$`F value`[1]
+p_value <- anova_summary[[1]]$`Pr(>F)`[1]
+
+anova_table <- data.frame(
+  Source_of_Variation = c("Treatment (state)", "Residual"),
+  Sum_of_Squares = c(ss_treatment, ss_error),
+  Degrees_of_Freedom = c(df_treatment, df_error),
+  Mean_Square = c(ms_treatment, ms_error),
+  F_value = c(f_statistic, NA),
+  P_value = c(p_value, NA)
+)
+df_total <- df_treatment + df_error
+cat(sprintf("\nF-statistic: %.4f\n", f_statistic))
+cat(sprintf("P-value: %.4f\n", p_value))
+cat(sprintf("Degrees of freedom (between groups): %d\n", df_treatment))
+cat(sprintf("Degrees of freedom (within groups): %d\n", df_error))
+cat(sprintf("Degrees of freedom (total): %d\n", df_total))
+
+# Multiple Linear Regression and Random Forest Regression
 set.seed(2025)
 train_index <- createDataPartition(numeric_df_clean$target_deathrate, p = 0.8, list = FALSE)
 train_data <- numeric_df_clean[train_index, ]
