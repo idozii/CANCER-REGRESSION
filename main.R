@@ -3,6 +3,7 @@ library(caret)
 library(ggplot2)
 library(corrplot)
 library(stringr)
+library(BSDA)
 
 cancer_regData <- read.csv('data/cancer_reg.csv')
 
@@ -57,9 +58,25 @@ for (col in cols_to_fill) {
   }
 }
 
+# Convert binnedinc like "(61494.5, 125635]" to its midpoint
 if ('binnedinc' %in% names(cancer_regData)) {
-  numeric_df$income_category <- as.numeric(str_extract(cancer_regData$binnedinc, "\\d+"))
+  numeric_df$income_category <- sapply(
+    as.character(cancer_regData$binnedinc),
+    function(x) {
+      nums <- as.numeric(unlist(regmatches(x, gregexpr("[0-9.]+", x))))
+      if (length(nums) == 2) {
+        return(mean(nums))
+      } else {
+        return(NA)
+      }
+    }
+  )
 }
+
+cor_matrix <- cor(numeric_df, use = "pairwise.complete.obs")
+target_correlations <- cor_matrix[, "target_deathrate"]
+top_features <- sort(abs(target_correlations), decreasing = TRUE)[2:7]
+print(top_features)
 
 selected_features <- c(
   "medincome",
@@ -102,8 +119,34 @@ for (var in key_vars) {
   }
 }
 
-# 5. MODEL BUILDING AND EVALUATION
-set.seed(225)
+# Null hypothesis (H0): The average cancer death rate is not less than 180.
+# Alternative hypothesis (H1): The average cancer death rate is less than 180.
+
+# Calculate sample mean and standard deviation
+sample_mean <- mean(numeric_df_clean$target_deathrate, na.rm = TRUE)
+sample_sd <- sd(numeric_df_clean$target_deathrate, na.rm = TRUE)
+n <- length(numeric_df_clean$target_deathrate)
+
+# Calculate z-statistic
+z_statistic <- (sample_mean - 180) / (sample_sd / sqrt(n))
+# Determine critical z-value (z_alpha) for alpha = 0.05 (one-tailed test)
+z_alpha <- qnorm(0.05, lower.tail = TRUE)
+
+cat(sprintf("Z-statistic: %.4f\n", z_statistic))
+cat(sprintf("Critical Z-value (Z-alpha): %.4f\n", z_alpha))
+
+if (z_statistic < z_alpha) {
+  cat("Conclusion: Reject the null hypothesis.\n")
+  cat("There is sufficient evidence to say that the average cancer death rate across U.S. counties is less than 180 per 100,000 people.\n")
+} else {
+  cat("Conclusion: Fail to reject the null hypothesis.\n")
+  cat("There is not sufficient evidence to say that the average cancer death rate across U.S. counties is less than 180 per 100,000 people.\n")
+}
+
+# Two-Sample T-Test for target_deathrate based on povertypercent
+
+
+set.seed(2025)
 train_index <- createDataPartition(numeric_df_clean$target_deathrate, p = 0.8, list = FALSE)
 train_data <- numeric_df_clean[train_index, ]
 test_data <- numeric_df_clean[-train_index, ]
@@ -113,16 +156,14 @@ y_train <- train_data$target_deathrate
 X_test <- test_data[, selected_features]
 y_test <- test_data$target_deathrate
 
-lm_model <- lm(y_train ~ ., data = X_train)
+lm_model <- lm(target_deathrate ~ ., data = train_data)
 lm_preds <- predict(lm_model, X_test)
 lm_mse <- mean((y_test - lm_preds)^2)
 lm_r2 <- cor(y_test, lm_preds)^2
 lm_mae <- mean(abs(y_test - lm_preds))
 print(summary(lm_model))
 
-rf_model <- randomForest(x = X_train, y = y_train, 
-                        ntree = 200, 
-                        importance = TRUE)
+rf_model <- randomForest(x = X_train, y = y_train, ntree = 200, importance = TRUE)
 rf_preds <- predict(rf_model, X_test)
 rf_mse <- mean((y_test - rf_preds)^2)
 rf_r2 <- cor(y_test, rf_preds)^2
@@ -131,27 +172,15 @@ rf_mae <- mean(abs(y_test - rf_preds))
 cat(sprintf("Multiple Linear Regression - MSE: %.2f, R²: %.4f, MAE: %.2f\n", lm_mse, lm_r2, lm_mae))
 cat(sprintf("Random Forest          - MSE: %.2f, R²: %.4f, MAE: %.2f\n", rf_mse, rf_r2, rf_mae))
 
-# Residual analysis
+# Residual analysis: Only Q-Q plot
 residuals <- y_test - lm_preds
 
-png("figure/visualize/model/optimized_diagnostics.png", width = 1200, height = 600)
-par(mfrow = c(1, 2))
-
-# Residuals vs predicted
-plot(lm_preds, residuals,
-     xlab = "Predicted Values", ylab = "Residuals",
-     main = paste("Residuals vs Predicted Values -", deparse(substitute(lm_model))),
-     pch = 19, col = rgb(0, 0, 1, 0.5))
-abline(h = 0, col = "red", lty = 1)
-
-# Normal Q-Q plot
+png("figure/visualize/model/optimized_diagnostics.png", width = 800, height = 600)
 qqnorm(residuals, main = "Normal Q-Q Plot")
 qqline(residuals, col = "red")
-
 dev.off()
 
-# 6. MODEL TESTING
-set.seed(225) 
+set.seed(2025) 
 sample_size <- min(20, length(y_test))
 sample_indices <- sample(1:length(y_test), sample_size)
 
