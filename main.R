@@ -57,8 +57,19 @@ for (col in cols_to_fill) {
   }
 }
 
+# Convert binnedinc like "(61494.5, 125635]" to its midpoint
 if ('binnedinc' %in% names(cancer_regData)) {
-  numeric_df$income_category <- as.numeric(str_extract(cancer_regData$binnedinc, "\\d+"))
+  numeric_df$income_category <- sapply(
+    as.character(cancer_regData$binnedinc),
+    function(x) {
+      nums <- as.numeric(unlist(regmatches(x, gregexpr("[0-9.]+", x))))
+      if (length(nums) == 2) {
+        return(mean(nums))
+      } else {
+        return(NA)
+      }
+    }
+  )
 }
 
 selected_features <- c(
@@ -102,7 +113,6 @@ for (var in key_vars) {
   }
 }
 
-# 5. MODEL BUILDING AND EVALUATION
 set.seed(2025)
 train_index <- createDataPartition(numeric_df_clean$target_deathrate, p = 0.8, list = FALSE)
 train_data <- numeric_df_clean[train_index, ]
@@ -129,18 +139,14 @@ rf_mae <- mean(abs(y_test - rf_preds))
 cat(sprintf("Multiple Linear Regression - MSE: %.2f, R²: %.4f, MAE: %.2f\n", lm_mse, lm_r2, lm_mae))
 cat(sprintf("Random Forest          - MSE: %.2f, R²: %.4f, MAE: %.2f\n", rf_mse, rf_r2, rf_mae))
 
-# Residual analysis
+# Residual analysis: Only Q-Q plot
 residuals <- y_test - lm_preds
 
-png("figure/visualize/model/optimized_diagnostics.png", width = 1200, height = 600)
-par(mfrow = c(1, 2))
-
+png("figure/visualize/model/optimized_diagnostics.png", width = 800, height = 600)
 qqnorm(residuals, main = "Normal Q-Q Plot")
 qqline(residuals, col = "red")
-
 dev.off()
 
-# 6. MODEL TESTING
 set.seed(2025) 
 sample_size <- min(20, length(y_test))
 sample_indices <- sample(1:length(y_test), sample_size)
