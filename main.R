@@ -4,6 +4,7 @@ library(ggplot2)
 library(corrplot)
 library(stringr)
 library(BSDA)
+library(dplyr)
 
 cancer_regData <- read.csv('data/cancer_reg.csv')
 
@@ -121,8 +122,6 @@ for (var in key_vars) {
 
 # Null hypothesis (H0): The average cancer death rate is not less than 180.
 # Alternative hypothesis (H1): The average cancer death rate is less than 180.
-
-# Calculate sample mean and standard deviation
 sample_mean <- mean(numeric_df_clean$target_deathrate, na.rm = TRUE)
 sample_sd <- sd(numeric_df_clean$target_deathrate, na.rm = TRUE)
 n <- length(numeric_df_clean$target_deathrate)
@@ -143,8 +142,35 @@ if (z_statistic < z_alpha) {
   cat("There is not sufficient evidence to say that the average cancer death rate across U.S. counties is less than 180 per 100,000 people.\n")
 }
 
-# Two-Sample T-Test for target_deathrate based on povertypercent
+# Null hypothesis (H0): The average target death rate for counties below the median poverty rate is equal to or greater than that for counties at or above the median poverty rate.
+# Alternative hypothesis (H1): The average target death rate for counties below the median poverty rate is less than that for counties at or above the median poverty rate.
+median_poverty <- median(cancer_regData$povertypercent, na.rm = TRUE)
+df_below_median <- cancer_regData %>% filter(povertypercent < median_poverty)
+df_at_or_above_median <- cancer_regData %>% filter(povertypercent >= median_poverty)
 
+mean_below_median <- mean(df_below_median$target_deathrate, na.rm = TRUE)
+mean_at_or_above_median <- mean(df_at_or_above_median$target_deathrate, na.rm = TRUE)
+sd_below_median <- sd(df_below_median$target_deathrate, na.rm = TRUE)
+sd_at_or_above_median <- sd(df_at_or_above_median$target_deathrate, na.rm = TRUE)
+n_below_median <- nrow(df_below_median)
+n_at_or_above_median <- nrow(df_at_or_above_median)
+
+z_statistic <- (mean_below_median - mean_at_or_above_median) / 
+  sqrt((sd_below_median^2 / n_below_median) + (sd_at_or_above_median^2 / n_at_or_above_median))
+
+alpha <- 0.05
+z_alpha <- qnorm(alpha, lower.tail = TRUE)
+
+cat(sprintf("Z-statistic: %.4f\n", z_statistic))
+cat(sprintf("Critical Z-value (Z-alpha): %.4f\n", z_alpha))
+
+if (z_statistic < z_alpha) {
+  cat("\nConclusion: Reject the null hypothesis.\n")
+  cat("Counties below median poverty have significantly lower target death rates.\n")
+} else {
+  cat("\nConclusion: Fail to reject the null hypothesis.\n")
+  cat("There is insufficient evidence to support the claim that the average cancer mortality rate in counties with lower poverty is significantly less than in counties with higher poverty.\n")
+}
 
 set.seed(2025)
 train_index <- createDataPartition(numeric_df_clean$target_deathrate, p = 0.8, list = FALSE)
